@@ -1,4 +1,7 @@
-﻿namespace API;
+﻿using API.Data;
+using Microsoft.EntityFrameworkCore;
+
+namespace API;
 
 public class Startup
 {
@@ -11,9 +14,11 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddDbContext<DataContext>(options =>
+        {
+            options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+        });
         services.AddControllers();
-
-        services.AddEndpointsApiExplorer();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
