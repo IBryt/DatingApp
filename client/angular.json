@@ -63,7 +63,10 @@
               "browserTarget": "client:build:production"
             },
             "development": {
-              "browserTarget": "client:build:development"
+              "browserTarget": "client:build:development",
+              "ssl": true,
+              "sslCert": "src/ssl/server.crt",
+              "sslKey": "src/ssl/server.key"
             }
           },
           "defaultConfiguration": "development"
