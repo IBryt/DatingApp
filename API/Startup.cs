@@ -19,6 +19,7 @@ public class Startup
             options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
         });
         services.AddControllers();
+        services.AddCors();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -31,6 +32,11 @@ public class Startup
         app.UseHttpsRedirection();
 
         app.UseRouting();
+
+        app.UseCors(policy => policy
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
 
         app.UseAuthentication();
 
