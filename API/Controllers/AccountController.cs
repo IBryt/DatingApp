@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
@@ -13,14 +14,16 @@ namespace API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly ITokenService _tokenService;
 
-        public AccountController(DataContext context)
+        public AccountController(DataContext context, ITokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
         [HttpPost("Register")]
-        public async Task<ActionResult<AppUser>> Register(RegisterDto registerDto)
+        public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
             if (await UserExists(registerDto.Username))
             {
@@ -40,7 +43,15 @@ namespace API.Controllers
 
             await _context.SaveChangesAsync();
 
-            return user;
+            var token = _tokenService.CreateToken(user);
+
+            var userDto = new UserDto
+            {
+                Username = user.UserName,
+                Token = token,
+            };
+
+            return userDto;
         }
 
         [HttpPost]
