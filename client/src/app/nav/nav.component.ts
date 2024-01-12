@@ -6,5 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./nav.component.css']
 })
 export class NavComponent {
+  model: any= {}
 
+  login() {
+    console.log(this.model);
+  }
 }
