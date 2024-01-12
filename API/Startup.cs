@@ -1,7 +1,10 @@
 ﻿using API.Data;
 using API.interfaces;
 using API.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace API;
 
@@ -23,6 +26,17 @@ public class Startup
         });
         services.AddControllers();
         services.AddCors();
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options => 
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"])),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                };
+            });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
