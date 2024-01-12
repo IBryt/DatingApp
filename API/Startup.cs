@@ -1,4 +1,6 @@
 ﻿using API.Data;
+using API.interfaces;
+using API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace API;
@@ -14,6 +16,7 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddScoped<ITokenService, TokenService>();
         services.AddDbContext<DataContext>(options =>
         {
             options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
