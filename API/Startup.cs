@@ -1,4 +1,5 @@
 ﻿using API.Data;
+using API.Extensions;
 using API.interfaces;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,24 +20,10 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddScoped<ITokenService, TokenService>();
-        services.AddDbContext<DataContext>(options =>
-        {
-            options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
-        });
+        services.AddApplicationServices(Configuration);
         services.AddControllers();
         services.AddCors();
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options => 
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"])),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                };
-            });
+        services.AddIdentityService(Configuration);
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
