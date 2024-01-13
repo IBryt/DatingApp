@@ -1,11 +1,5 @@
-﻿using API.Data;
-using API.Extensions;
-using API.interfaces;
-using API.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+﻿using API.Extensions;
+using API.Middleware;
 
 namespace API;
 
@@ -28,17 +22,14 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        if (env.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
+        app.UseMiddleware<ExceptionMiddleware>();
 
         app.UseHttpsRedirection();
 
         app.UseRouting();
 
         app.UseCors(policy => policy
-            .WithOrigins("https://localhost:4200") 
+            .WithOrigins("https://localhost:4200")
             .AllowAnyHeader()
             .AllowAnyMethod());
 
