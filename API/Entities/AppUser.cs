@@ -1,4 +1,6 @@
-﻿namespace API.Entities;
+﻿using API.Extensions;
+
+namespace API.Entities;
 
 public class AppUser
 {
@@ -17,4 +19,5 @@ public class AppUser
     public string City { get; set; } = string.Empty;
     public String Country { get; set; } = String.Empty;
     public ICollection<Photo> Photos { get; set; } = new List<Photo>();
+    public int GetAge() => DateOfBirth.CalculateAge();
 }
