@@ -4,12 +4,13 @@ import { map } from 'rxjs/internal/operators/map';
 import { User } from '../_model/user';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
 import { USER_KEY } from '../constants';
+import { environment } from 'src/environment/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
-  baseUrl = 'https://localhost:5001/api/';
+  baseUrl = environment.apiUrl;
   private currentUserSource = new BehaviorSubject<User | null>(null);
   currentUser$ = this.currentUserSource.asObservable();
 
