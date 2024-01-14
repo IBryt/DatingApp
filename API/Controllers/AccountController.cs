@@ -55,7 +55,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<AppUser>> Login(LoginDto loginDto)
+    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
         var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == loginDto.Username);
 
@@ -76,7 +76,15 @@ public class AccountController : ControllerBase
             }
         }
 
-        return user;
+        var token = _tokenService.CreateToken(user);
+
+        var userDto = new UserDto
+        {
+            Username = user.UserName,
+            Token = token,
+        };
+
+        return userDto;
     }
 
     private async Task<bool> UserExists(string username)
