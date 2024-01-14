@@ -6,6 +6,7 @@ public class MemberDto
 {
     public int Id { get; set; }
     public string UserName { get; set; } = string.Empty;
+    public string PhotoUrl { get; set; } = string.Empty;
     public int Age { get; set; }
     public string KnownAs { get; set; } = string.Empty;
     public DateTime Created { get; set; }
