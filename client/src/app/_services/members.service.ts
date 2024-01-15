@@ -2,10 +2,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environment/environment';
 import { Member } from '../_model/member';
-import { USER_KEY } from '../constants';
-import { Observable } from 'rxjs';
+import { AppConstants } from '../constants';
 
-const storedData = JSON.parse(localStorage.getItem(USER_KEY) || '{}');
+
+const storedData = JSON.parse(localStorage.getItem(AppConstants.USER_STORAGE_KEY) || '{}');
 const token = storedData.token || '';
 const httpOptions = {
   headers: new HttpHeaders({
