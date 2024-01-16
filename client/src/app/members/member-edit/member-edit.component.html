@@ -3,13 +3,11 @@
         <h1>Your profile</h1>
     </div>
     <div class="col-8">
-        <div class="alert alert-info">
-            <p>
-                <strong>
-                    Information:
-                </strong>
-                You have mage changes. any unsaved changes will be lost.
-            </p>
+        <div *ngIf="editForm.dirty" class="alert alert-info">
+            <strong>
+                Information:
+            </strong>
+            You have mage changes. any unsaved changes will be lost.
         </div>
     </div>
     <div class="col-4">
@@ -39,14 +37,15 @@
                 </div>
             </div>
             <div class="card-footer">
-                <button class="btn btn-success btn-block">Save Changes</button>
+                <button [disabled]="!editForm.dirty" form="editForm" class="btn btn-success btn-block">Save
+                    Changes</button>
             </div>
         </div>
     </div>
     <div class="col-8">
         <tabset class="member-tabset">
             <tab heading='About {{member.knownAs}}'>
-                <form>
+                <form #editForm="ngForm" (ngSubmit)="updateMember()" id="editForm">
                     <h4>Description</h4>
                     <textarea class="form-control" [(ngModel)]="member.introduction" name="introduction"
                         rows="6"></textarea>
