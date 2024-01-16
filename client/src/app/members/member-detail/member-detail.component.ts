@@ -9,6 +9,9 @@ import { MembersService } from 'src/app/_services/members.service';
   styleUrls: ['./member-detail.component.css']
 })
 export class MemberDetailComponent implements OnInit {
+  slideChangeMessage = '';
+  slides: any = [];
+
   member: Member = <Member>{};
 
   constructor(
@@ -17,12 +20,17 @@ export class MemberDetailComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadMembers();  
+    this.loadMembers();
   }
 
   loadMembers() {
     this.membersService.getMember(this.route.snapshot.paramMap.get('username')!).subscribe({
-      next: member => this.member = member,
+      next: member => {
+        this.member = member;
+        for (const photo of this.member.photos) {
+          this.slides.push({ image: photo.url })
+        }
+      },
     })
   }
 }
