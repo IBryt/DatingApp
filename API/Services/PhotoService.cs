@@ -25,7 +25,7 @@ public class PhotoService : IPhotoService
 
     public async Task<ImageUploadResult> AddPhotoAsync(IFormFile file)
     {
-        var ImageUploadResult = new ImageUploadResult();
+        var uploadResult = new ImageUploadResult();
 
         if (file.Length > 0)
         {
@@ -39,9 +39,9 @@ public class PhotoService : IPhotoService
                     .Crop("fill")
                     .Gravity("face")
             };
-            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            uploadResult = await _cloudinary.UploadAsync(uploadParams);
         }
-        return ImageUploadResult;
+        return uploadResult;
     }
 
     public async Task<DeletionResult> DeletePhotoAsync(string publicId)

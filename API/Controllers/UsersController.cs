@@ -34,6 +34,7 @@ public class UsersController : ControllerBase
         return Ok(members);
     }
 
+    //[HttpGet("{username}", Name = "GetUsers")]
     [HttpGet("{username}")]
     public async Task<ActionResult<MemberDto>> GetUsers(string username)
     {
@@ -81,7 +82,8 @@ public class UsersController : ControllerBase
 
         if (await _userRepository.SaveAllAsync())
         {
-            return _mapper.Map<PhotoDto>(photo);
+            return CreatedAtAction(nameof(GetUsers), new { Username = user.UserName }, _mapper.Map<PhotoDto>(photo));
+            //return CreatedAtAction("GetUsers", new { Username = user.UserName }, _mapper.Map<PhotoDto>(photo));
         }
 
         return BadRequest("Problem adding photo");
