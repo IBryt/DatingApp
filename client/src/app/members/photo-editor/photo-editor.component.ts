@@ -2,8 +2,10 @@ import { Component, Input } from '@angular/core';
 import { FileUploader } from 'ng2-file-upload';
 import { take } from 'rxjs';
 import { Member } from 'src/app/_model/member';
+import { Photo } from 'src/app/_model/photo';
 import { User } from 'src/app/_model/user';
 import { AccountService } from 'src/app/_services/account.service';
+import { MembersService } from 'src/app/_services/members.service';
 import { environment } from 'src/environment/environment';
 
 @Component({
@@ -19,7 +21,8 @@ export class PhotoEditorComponent {
   user: User | null = <User>{};
 
   constructor(
-    private accountService: AccountService
+    private accountService: AccountService,
+    private membersService: MembersService,
   ) {
     this.accountService.currentUser$.pipe(take(1)).subscribe({
       next: user => this.user = user
@@ -56,4 +59,23 @@ export class PhotoEditorComponent {
     this.hasBaseDropZoneOver = e;
   }
 
+  setMainPhoto(photo: Photo) {
+    this.membersService.setMainPhoto(photo.id).subscribe({
+      next: _ => {
+        if (this.user) {
+          this.user.photoUrl = photo.url;
+          this.accountService.setCurrentUser(this.user);
+          this.member.photoUrl = photo.url;
+          this.member.photos.forEach(p => {
+            if (p.isMain) {
+              p.isMain = false
+            }
+            if (p.id === photo.id) {
+              p.isMain = true;
+            }
+          });
+        }
+      }
+    })
+  }
 }

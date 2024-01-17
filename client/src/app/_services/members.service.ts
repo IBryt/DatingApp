@@ -36,9 +36,13 @@ export class MembersService {
   updateMember(member: Member) {
     return this.http.put<void>(this.baseUrl + 'users', member).pipe(
       map(() => {
-          const index = this.members.indexOf(member);
-          this.members[index]= member;
+        const index = this.members.indexOf(member);
+        this.members[index] = member;
       })
     )
+  }
+
+  setMainPhoto(photoId: number) {
+    return this.http.put<void>(this.baseUrl + 'users/set-main-photo/' + photoId, {});
   }
 }
