@@ -88,4 +88,38 @@ public class UsersController : ControllerBase
 
         return BadRequest("Problem adding photo");
     }
+
+    [HttpPut("set-main-photo/{photoId}")]
+    public async Task<ActionResult> SetMainPhoto(int photoId)
+    {
+        var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+
+        var photo = user.Photos.FirstOrDefault(p => p.Id == photoId);
+
+        if (photo == null) 
+        {
+            return BadRequest("This photo isn't exist");
+        }
+
+        if (photo.IsMain)
+        {
+            return BadRequest("This is already your main photo");
+        }
+
+        var currentMain = user.Photos.FirstOrDefault(p => p.IsMain);
+
+        if (currentMain != null)
+        {
+            currentMain.IsMain = false;
+        }
+
+        photo.IsMain = true;
+
+        if (await _userRepository.SaveAllAsync())
+        {
+            return NoContent();
+        }
+
+        return BadRequest("Failed to set new main photo");
+    }
 }
