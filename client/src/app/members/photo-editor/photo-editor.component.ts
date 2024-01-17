@@ -78,4 +78,10 @@ export class PhotoEditorComponent {
       }
     })
   }
+
+  deletePhoto(photoId: number) {
+    this.membersService.deletePhoto(photoId).subscribe({
+      next: _ => this.member.photos = this.member.photos.filter(p => p.id !== photoId)
+    })
+  }
 }

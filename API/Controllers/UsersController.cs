@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 namespace API.Controllers;
@@ -96,7 +97,7 @@ public class UsersController : ControllerBase
 
         var photo = user.Photos.FirstOrDefault(p => p.Id == photoId);
 
-        if (photo == null) 
+        if (photo == null)
         {
             return BadRequest("This photo isn't exist");
         }
@@ -121,5 +122,44 @@ public class UsersController : ControllerBase
         }
 
         return BadRequest("Failed to set new main photo");
+    }
+
+    [HttpDelete("delete-photo/{photoId}")]
+    public async Task<ActionResult> DeletePhoto(int photoId)
+    {
+        var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+
+        var photo = user.Photos.FirstOrDefault(p => p.Id == photoId);
+
+        if (photo == null)
+        {
+            return NotFound();
+        }
+
+        if (photo.IsMain)
+        {
+            return BadRequest("You cannot delete your main photo");
+        }
+
+        if (photo.PublicId.IsNullOrEmpty())
+        {
+            return BadRequest("This photo have not PublicId");
+        }
+
+        var result = await _photoService.DeletePhotoAsync(photo.PublicId);
+
+        if (result.Error != null)
+        {
+            return BadRequest(result.Error.Message);
+        }
+
+        user.Photos.Remove(photo);
+
+        if (await _userRepository.SaveAllAsync())
+        {
+            return Ok();
+        }
+
+        return BadRequest("Failed to delete new main photo");
     }
 }
