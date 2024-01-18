@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AccountService } from '../_services/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
@@ -9,10 +9,11 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Vali
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   @Output() cancelRegister: any = new EventEmitter();
   model: any = {};
   registerForm: FormGroup;
+  maxDate: Date = new Date();
 
   constructor(
     private accountService: AccountService,
@@ -20,6 +21,10 @@ export class RegisterComponent {
     private fb: FormBuilder,
   ) {
     this.registerForm = this.initializeForm();
+  }
+
+  ngOnInit(): void {
+    this.maxDate.setFullYear(this.maxDate.getFullYear() - 18)
   }
 
   initializeForm(): FormGroup {
