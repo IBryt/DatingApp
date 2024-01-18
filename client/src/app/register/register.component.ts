@@ -24,7 +24,12 @@ export class RegisterComponent {
 
   initializeForm(): FormGroup {
     const fg = this.fb.group({
+      gender: ['male'],
       username: ['', Validators.required],
+      knownAs: ['', Validators.required],
+      dateOfBirth: ['', Validators.required],
+      city: ['', Validators.required],
+      country: ['', Validators.required],
       password: ['', [
         Validators.required,
         Validators.minLength(4),
