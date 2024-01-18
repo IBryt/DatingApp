@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AccountService } from '../_services/account.service';
 import { ToastrService } from 'ngx-toastr';
-import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 
 
 @Component({
@@ -17,22 +17,23 @@ export class RegisterComponent {
   constructor(
     private accountService: AccountService,
     private toastr: ToastrService,
+    private fb: FormBuilder,
   ) {
     this.registerForm = this.initializeForm();
   }
 
   initializeForm(): FormGroup {
-    const fg = new FormGroup({
-      username: new FormControl('', Validators.required),
-      password: new FormControl('', [
+    const fg = this.fb.group({
+      username: ['', Validators.required],
+      password: ['', [
         Validators.required,
         Validators.minLength(4),
         Validators.maxLength(8)
-      ]),
-      confirmPassword: new FormControl('', [
+      ]],
+      confirmPassword: ['', [
         Validators.required,
         this.matchValues('password'),
-      ]),
+      ]],
     });
 
     fg.controls.password.valueChanges.subscribe({
