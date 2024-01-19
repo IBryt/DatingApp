@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Observable, take } from 'rxjs';
 import { Member } from 'src/app/_model/member';
 import { Pagination } from 'src/app/_model/pagination';
+import { User } from 'src/app/_model/user';
 import { UserParams } from 'src/app/_model/userParams';
 import { AccountService } from 'src/app/_services/account.service';
 import { MembersService } from 'src/app/_services/members.service';
@@ -15,6 +16,8 @@ export class MemberListComponent implements OnInit {
   members: Member[] | undefined;
   pagination: Pagination | undefined;
   userParams: UserParams | undefined;
+  user: User | null | undefined
+  genderList = [{value: 'male', display: 'Males'},{value: 'female', display: 'Females'}]
 
 
   constructor(
@@ -23,8 +26,9 @@ export class MemberListComponent implements OnInit {
   ) {
     const user = this.accountService.currentUser$.pipe(take(1)).subscribe({
       next: user => {
-        if (user) {
-          this.userParams = new UserParams(user)
+        this.user = user;
+        if (this.user) {
+          this.userParams = new UserParams(this.user)
         }
       }
     });
@@ -42,6 +46,13 @@ export class MemberListComponent implements OnInit {
           this.pagination = response.pagination;
         }
       });
+    }
+  }
+
+  resetFilters() {
+    if(this.user){
+      this.userParams = new UserParams(this.user);
+      this.loadMembers();
     }
   }
 
