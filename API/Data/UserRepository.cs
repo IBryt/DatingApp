@@ -29,11 +29,15 @@ public class UserRepository : IUserRepository
 
     public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
     {
-        var query = _context.Users
-           .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
-           .AsNoTracking();
+        var query = _context.Users.AsQueryable();
 
-        return await PagedList<MemberDto>.CreateAsync(query, userParams.PageNumber, userParams.PageSize);
+        query = query.Where(u => u.UserName != userParams.CurrentUserName);
+        query = query.Where(u => u.Gender == userParams.Gender);
+
+        var source = query.ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
+            .AsNoTracking();
+
+        return await PagedList<MemberDto>.CreateAsync(source, userParams.PageNumber, userParams.PageSize);
     }
 
     public async Task<AppUser> GetUserByIdAsync(int id)
@@ -45,7 +49,7 @@ public class UserRepository : IUserRepository
     {
         return await _context.Users
             .Include(u => u.Photos)
-            .SingleOrDefaultAsync(x => x.UserName == username) ;
+            .SingleOrDefaultAsync(x => x.UserName == username);
     }
 
     public async Task<IEnumerable<AppUser>> GetUsersAsync()

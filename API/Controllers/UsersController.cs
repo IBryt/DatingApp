@@ -30,8 +30,16 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
+    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
     {
+        var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+        userParams.CurrentUserName = user.UserName;
+
+        if (string.IsNullOrEmpty(userParams.Gender))
+        {
+            userParams.Gender = user.Gender == "male" ? "female" : "male";
+        }
+
         var members = await _userRepository.GetMembersAsync(userParams);
         Response.AddPaginationHeeader(members.CurrentPage, members.PageSize,
             members.TotalCount, members.TotalPages);
