@@ -41,7 +41,11 @@ public class UserRepository : IUserRepository
             && u.DateOfBirth >= minDob
             && u.DateOfBirth <= maxDob);
 
-
+        query = userParams.OrderBy switch
+        {
+            "created" => query.OrderByDescending(u => u.Created),
+            _ => query.OrderByDescending(u => u.LastActive)
+        };
 
         var source = query.ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
             .AsNoTracking();
