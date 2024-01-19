@@ -2,6 +2,7 @@
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -29,9 +30,12 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
     {
-        var members = await _userRepository.GetMembersAsync();
+        var members = await _userRepository.GetMembersAsync(userParams);
+        Response.AddPaginationHeeader(members.CurrentPage, members.PageSize,
+            members.TotalCount, members.TotalPages);
+
         return Ok(members);
     }
 
