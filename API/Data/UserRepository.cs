@@ -29,10 +29,19 @@ public class UserRepository : IUserRepository
 
     public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
     {
+
+        var minDob = DateTime.Today.AddYears(-userParams.MaxAge - 1);
+        var maxDob = DateTime.Today.AddYears(-userParams.MinAge);
+
         var query = _context.Users.AsQueryable();
 
-        query = query.Where(u => u.UserName != userParams.CurrentUserName);
-        query = query.Where(u => u.Gender == userParams.Gender);
+        query = query.Where(
+            u => u.UserName != userParams.CurrentUserName
+            && u.Gender == userParams.Gender
+            && u.DateOfBirth >= minDob
+            && u.DateOfBirth <= maxDob);
+
+
 
         var source = query.ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
             .AsNoTracking();
