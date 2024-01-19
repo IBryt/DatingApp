@@ -10,9 +10,7 @@ using System.Text;
 
 namespace API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class AccountController : ControllerBase
+public class AccountController : BaseApiController
 {
     private readonly DataContext _context;
     private readonly ITokenService _tokenService;
