@@ -91,6 +91,7 @@ public class AccountController : ControllerBase
             Token = token,
             PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url ?? "",
             KnownAs = user.KnownAs,
+            Gender = user.Gender,
         };
     }
 
