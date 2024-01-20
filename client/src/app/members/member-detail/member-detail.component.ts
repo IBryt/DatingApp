@@ -12,7 +12,7 @@ export class MemberDetailComponent implements OnInit {
   slideChangeMessage = '';
   slides: any = [];
 
-  member: Member = <Member>{};
+  member: Member | undefined;
 
   constructor(
     private membersService: MembersService,
