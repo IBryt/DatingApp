@@ -14,13 +14,19 @@ import { UserParams } from '../_model/userParams';
 export class MembersService {
   baseUrl = environment.apiUrl;
   members: Member[] = [];
-
+  memberCashe = new Map();
 
   constructor(
     private http: HttpClient,
   ) { }
 
   getMembers(userParams: UserParams) {
+    const key = Object.values(userParams).join('-');
+    var response = this.memberCashe.get(key);
+
+    if (response) {
+      return of(response)
+    }
 
     let params = this.getPaginationHeaders(userParams.pageNumber, userParams.pageSize);
 
@@ -29,7 +35,12 @@ export class MembersService {
     params = params.append('gender', userParams.gender);
     params = params.append('orderBy', userParams.orderBy);
 
-    return this.getPaginationResult<Member[]>(this.baseUrl + 'users', params)
+    return this.getPaginationResult<Member[]>(this.baseUrl + 'users', params).pipe(
+      map(res => {
+        this.memberCashe.set(key, res);
+        return res;
+      })
+    )
   }
 
   private getPaginationResult<T>(url: string, params: HttpParams) {
