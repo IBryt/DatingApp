@@ -3,9 +3,11 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environment/environment';
 import { Member } from '../_model/member';
 import { of } from 'rxjs/internal/observable/of';
-import { map } from 'rxjs';
+import { map, take } from 'rxjs';
 import { PaginatedResult } from '../_model/pagination';
 import { UserParams } from '../_model/userParams';
+import { AccountService } from './account.service';
+import { User } from '../_model/user';
 
 
 @Injectable({
@@ -15,10 +17,37 @@ export class MembersService {
   baseUrl = environment.apiUrl;
   members: Member[] = [];
   memberCashe = new Map();
+  user: User | null | undefined;
+  userParams: UserParams | undefined;
 
   constructor(
     private http: HttpClient,
-  ) { }
+    private accountService: AccountService,
+  ) {
+    const user = this.accountService.currentUser$.pipe(take(1)).subscribe({
+      next: user => {
+        this.user = user;
+        if (this.user) {
+          this.userParams = new UserParams(this.user)
+        }
+      }
+    });
+  }
+
+  getUserParams() {
+    return this.userParams;
+  }
+
+  setUserParams(params: UserParams) {
+    this.userParams = params;
+  }
+
+  resetUserParams() {
+    if (this.user) {
+      this.userParams = new UserParams(this.user);
+    }
+    return this.userParams;
+  }
 
   getMembers(userParams: UserParams) {
     const key = Object.values(userParams).join('-');
