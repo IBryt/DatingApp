@@ -123,6 +123,14 @@ export class MembersService {
     return this.http.put<void>(this.baseUrl + 'users/set-main-photo/' + photoId, {});
   }
 
+  addLike(username:string) {
+    return this.http.post(this.baseUrl+ 'likes/' + username, {})
+  }
+
+  getLikes(predicate:string){
+    return this.http.get(this.baseUrl + 'likes?=' + predicate)
+  }
+  
   deletePhoto(photoId: number) {
     return this.http.delete<void>(this.baseUrl + 'users/delete-photo/' + photoId);
   }
