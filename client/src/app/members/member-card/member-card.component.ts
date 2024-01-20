@@ -9,16 +9,16 @@ import { MembersService } from 'src/app/_services/members.service';
   styleUrls: ['./member-card.component.css']
 })
 export class MemberCardComponent {
-  @Input() member: Member = <Member>{};
+  @Input() member: Member | undefined;
 
   constructor(
     private memberService: MembersService,
     private toastr: ToastrService,
-  ){}
+  ) { }
 
-  addLike(member:Member) {
+  addLike(member: Member) {
     this.memberService.addLike(member.userName).subscribe({
-      next: _ => this.toastr.success('You have liked '+ member.knownAs)
+      next: _ => this.toastr.success('You have liked ' + member.knownAs)
     })
   }
 }
