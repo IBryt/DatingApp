@@ -80,7 +80,8 @@ public class MessagesController : BaseApiController
     public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessagesThread(string username)
     { 
         var currentUsername = User.GetUsername();
-        return Ok(await _messageRepository.GetMessageThreadAsync(currentUsername, username));
+        var messages = await _messageRepository.GetMessageThreadAsync(currentUsername, username);
+        return Ok(messages);
     }
 
 }
