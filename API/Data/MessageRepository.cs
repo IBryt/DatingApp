@@ -2,16 +2,21 @@
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace API.Data;
 
 public class MessageRepository : IMessageRepository
 {
     private readonly DataContext _context;
+    private readonly IMapper _mapper;
 
-    public MessageRepository(DataContext context)
+    public MessageRepository(DataContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     public void AddMessage(Message message)
@@ -29,9 +34,22 @@ public class MessageRepository : IMessageRepository
         return await _context.Messages.FindAsync(id);
     }
 
-    public Task<PagedList<Message>> GetMessagesForUserAsync()
+    public async Task<PagedList<MessageDto>> GetMessagesForUserAsync(MessageParams messageParams)
     {
-        throw new NotImplementedException();
+        var query = _context.Messages
+            .OrderByDescending(m => m.MessageSent)
+            .AsQueryable();
+
+        query = messageParams.Container switch
+        {
+            "Inbox" => query.Where(u => u.Recipient.UserName == messageParams.Username),
+            "Outbox" => query.Where(u => u.Sender.UserName == messageParams.Username),
+            _ => query.Where(u => u.Recipient.UserName == messageParams.Username && u.DateRead == null),
+        };
+
+        var messages = query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
+
+        return await PagedList<MessageDto>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
     }
 
     public Task<IEnumerable<MessageDto>> GetMessageThreadAsync(int currentUserId, int recipientId)

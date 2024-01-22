@@ -1,6 +1,7 @@
 ﻿using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -23,7 +24,7 @@ public class MessagesController : BaseApiController
     }
 
     [HttpPost]
-    public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto) 
+    public async Task<ActionResult<MessageDto>> CreateMessage(CreateMessageDto createMessageDto)
     {
         var username = User.GetUsername();
         var recipientUsername = createMessageDto.RecipientUsername.ToLower();
@@ -36,7 +37,7 @@ public class MessagesController : BaseApiController
         var sender = await _userRepository.GetUserByUsernameAsync(username);
         var recipient = await _userRepository.GetUserByUsernameAsync(recipientUsername);
 
-        if (recipient == null) 
+        if (recipient == null)
         {
             return NotFound();
         }
@@ -52,11 +53,27 @@ public class MessagesController : BaseApiController
 
         _messageRepository.AddMessage(message);
         if (!await _messageRepository.SaveAllAsync())
-        { 
+        {
             return BadRequest("Failed to sent message");
         }
-        
+
         var messageDto = _mapper.Map<MessageDto>(message);
         return Ok(messageDto);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<MemberDto>>> GetMessagesForUser([FromQuery] MessageParams messageParams)
+    {
+        messageParams.Username = User.GetUsername();
+
+        var messages = await _messageRepository.GetMessagesForUserAsync(messageParams);
+
+        Response.AddPaginationHeeader(
+            messages.CurrentPage,
+            messages.PageSize,
+            messages.TotalCount,
+            messages.TotalPages);
+
+        return Ok(messages);
     }
 }
