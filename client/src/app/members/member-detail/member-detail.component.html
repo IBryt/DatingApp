@@ -32,19 +32,19 @@
         </div>
     </div>
     <div class="col-8">
-        <tabset class="member-tabset">
-            <tab heading='About {{member.knownAs}}'>
+        <tabset class="member-tabset" #memberTabs>
+            <tab heading='About {{member.knownAs}}' (selectTab)="onTabActivated($event)">
                 <h4>Description</h4>
                 <p>{{member.introduction}}</p>
                 <h4>Looking for</h4>
                 <p>{{member.lookingFor}}</p>
 
             </tab>
-            <tab heading='Interests'>
+            <tab heading='Interests' (selectTab)="onTabActivated($event)">
                 <h4>Interests</h4>
                 <p>{{member.interests}}</p>
             </tab>
-            <tab heading='Photos'>
+            <tab heading='Photos' (selectTab)="onTabActivated($event)">
                 <div class="gallery">
                     <carousel [interval]="0" [showIndicators]="false">
                         <slide *ngFor="let slide of slides; let index=index">
@@ -53,8 +53,8 @@
                     </carousel>
                 </div>
             </tab>
-            <tab heading='Messages'>
-                <app-member-messages [username]="member.userName"></app-member-messages>
+            <tab heading='Messages' (selectTab)="onTabActivated($event)">
+                <app-member-messages [messages]="messages"></app-member-messages>
             </tab>
         </tabset>
     </div>
