@@ -26,22 +26,20 @@ export class MemberDetailComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadMembers();
+    this.route.data.subscribe({
+      next: data => {
+        this.member = data['member']
+      }
+    })
+
+    for (const photo of this.member.photos) {
+      this.slides.push({ image: photo.url })
+    }
+
     this.route.queryParams.subscribe({
       next: params => {
         params['tab'] ? this.selectTab(3) : this.selectTab(0);
       }
-    })
-  }
-
-  loadMembers() {
-    this.membersService.getMember(this.route.snapshot.paramMap.get('username')!).subscribe({
-      next: member => {
-        this.member = member;
-        for (const photo of this.member.photos) {
-          this.slides.push({ image: photo.url })
-        }
-      },
     })
   }
 
