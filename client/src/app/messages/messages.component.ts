@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Message } from '../_model/message';
 import { Pagination } from '../_model/pagination';
 import { MessageService } from '../_services/message.service';
+import { findIndex } from 'rxjs';
 
 @Component({
   selector: 'app-messages',
   templateUrl: './messages.component.html',
   styleUrls: ['./messages.component.css']
 })
-export class MessagesComponent implements OnInit{
+export class MessagesComponent implements OnInit {
   messages: Message[] = [];
   pagination: Pagination | undefined;
   container = 'Unread';
@@ -35,10 +36,15 @@ export class MessagesComponent implements OnInit{
     })
   }
 
-  pageChanged(event:any){
-    if(this.pageNumber !== event.page){
+  pageChanged(event: any) {
+    if (this.pageNumber !== event.page) {
       this.pageNumber = event.page;
       this.loadMessages();
     }
+  }
+  deleteMessage(id: number) {
+    this.messageService.deleteMessage(id).subscribe({
+      next: _ => this.messages.splice(this.messages.findIndex(m => m.id === id), 1)
+    })
   }
 }

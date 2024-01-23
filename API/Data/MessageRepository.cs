@@ -31,7 +31,10 @@ public class MessageRepository : IMessageRepository
 
     public async Task<Message> GetMessageAsync(int id)
     {
-        return await _context.Messages.FindAsync(id);
+        return await _context.Messages
+            .Include(m => m.Recipient)
+            .Include(m => m.Sender)
+            .SingleOrDefaultAsync(m => m.Id == id);
     }
 
     public async Task<PagedList<MessageDto>> GetMessagesForUserAsync(MessageParams messageParams)
