@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environment/environment';
 import { getPaginationHeaders, getPaginationResult } from './pagination-helper';
 import { Message } from '../_model/message';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -22,5 +21,9 @@ export class MessageService {
 
   getMessageThread(username: string) {
     return this.http.get<Message[]>(this.baseUrl + 'messages/thread/' + username);
+  }
+
+  sendMessage(username: string, content: string) {
+    return this.http.post<Message>(this.baseUrl + 'messages', { recipientUsername: username, content });
   }
 }
