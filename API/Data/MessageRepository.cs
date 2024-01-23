@@ -42,9 +42,9 @@ public class MessageRepository : IMessageRepository
 
         query = messageParams.Container switch
         {
-            "Inbox" => query.Where(u => u.Recipient.UserName == messageParams.Username),
-            "Outbox" => query.Where(u => u.Sender.UserName == messageParams.Username),
-            _ => query.Where(u => u.Recipient.UserName == messageParams.Username && u.DateRead == null),
+            "Inbox" => query.Where(u => u.Recipient.UserName == messageParams.Username && !u.RecipientDeleted),
+            "Outbox" => query.Where(u => u.Sender.UserName == messageParams.Username && !u.SenderDeleted),
+            _ => query.Where(u => u.Recipient.UserName == messageParams.Username && !u.RecipientDeleted && u.DateRead == null),
         };
 
         var messages = query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
@@ -60,10 +60,12 @@ public class MessageRepository : IMessageRepository
             .Include(u => u.Recipient)
             .ThenInclude(p => p.Photos)
             .Where(m =>
-                m.Recipient.UserName == currentUsername
+                m.Recipient.UserName == currentUsername 
+                && !m.RecipientDeleted
                 && m.Sender.UserName == recipientUsername
                 || m.Recipient.UserName == recipientUsername
-                && m.Sender.UserName == currentUsername
+                && m.Sender.UserName == currentUsername 
+                && !m.SenderDeleted
             )
             .OrderBy(m => m.MessageSent)
             .ToListAsync();
