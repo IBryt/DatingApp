@@ -12,12 +12,12 @@ import { MessageService } from 'src/app/_services/message.service';
   styleUrls: ['./member-detail.component.css']
 })
 export class MemberDetailComponent implements OnInit {
-  @ViewChild('memberTabs') memberTabs: TabsetComponent | undefined;
+  @ViewChild('memberTabs', { static: true }) memberTabs?: TabsetComponent;
   slideChangeMessage = '';
   slides: any = [];
   activeTab: TabDirective | undefined;
   messages: Message[] | undefined;
-  member: Member | undefined;
+  member: Member = {} as Member;;
 
   constructor(
     private membersService: MembersService,
@@ -27,6 +27,11 @@ export class MemberDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMembers();
+    this.route.queryParams.subscribe({
+      next: params => {
+        params['tab'] ? this.selectTab(3) : this.selectTab(0);
+      }
+    })
   }
 
   loadMembers() {
@@ -45,6 +50,10 @@ export class MemberDetailComponent implements OnInit {
     if (this.activeTab.heading === 'Messages' && !this.messages?.length) {
       this.loadMessages();
     }
+  }
+
+  selectTab(tabId: number) {
+    this.memberTabs!.tabs[tabId].active = true;
   }
 
   loadMessages() {
