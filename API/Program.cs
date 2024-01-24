@@ -1,5 +1,7 @@
 using API;
 using API.Data;
+using API.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace IgorBryt.Store.WebAPI;
@@ -15,8 +17,9 @@ public class Program
         try 
         {
             var context = services.GetRequiredService<DataContext>();
+            var userManager = services.GetRequiredService<UserManager<AppUser>>();
             await context.Database.MigrateAsync();
-            //await Seed.SeedUsers(context);
+            await Seed.SeedUsers(userManager);
         }
         catch (Exception ex) 
         {
