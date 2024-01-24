@@ -1,13 +1,9 @@
-﻿using API.Extensions;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace API.Entities;
 
-public class AppUser
+public class AppUser : IdentityUser<int>
 {
-    public int Id { get; set; }
-    public string UserName { get; set; } = string.Empty;
-    public byte[] PasswordHash { get; set; } = Array.Empty<byte>();
-    public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
     public DateTime DateOfBirth { get; set; }
     public string KnownAs { get; set; } = string.Empty;
     public DateTime Created { get; set; } = DateTime.Now;
