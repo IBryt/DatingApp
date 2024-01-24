@@ -18,8 +18,9 @@ public class Program
         {
             var context = services.GetRequiredService<DataContext>();
             var userManager = services.GetRequiredService<UserManager<AppUser>>();
+            var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
             await context.Database.MigrateAsync();
-            await Seed.SeedUsers(userManager);
+            await Seed.SeedUsers(userManager, roleManager);
         }
         catch (Exception ex) 
         {

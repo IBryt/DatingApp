@@ -47,7 +47,14 @@ public class AccountController : BaseApiController
             return BadRequest(result.Errors);
         }
 
-        var token = _tokenService.CreateToken(user);
+        var roleResult = await _userManager.AddToRoleAsync(user, "Member");
+
+        var token = await _tokenService.CreateToken(user);
+
+        if (!roleResult.Succeeded)
+        {
+            return BadRequest(roleResult.Errors);
+        }
 
         var userDto = GetUserDto(user, token);
 
@@ -73,7 +80,7 @@ public class AccountController : BaseApiController
             return Unauthorized();
         }
 
-        var token = _tokenService.CreateToken(user);
+        var token = await  _tokenService.CreateToken(user);
 
         var userDto = GetUserDto(user, token);
 
