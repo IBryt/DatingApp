@@ -19,4 +19,5 @@ public class AppUser : IdentityUser<int>
     public ICollection<UserLike> LikedUsers { get; set; } = new List<UserLike>();
     public ICollection<Message> MessagesSent { get; set; } = new List<Message>();
     public ICollection<Message> MessagesReceived { get; set; } = new List<Message>();
+    public ICollection<AppUserRole> UserRoles { get; set; } = new List<AppUserRole>();
 }
