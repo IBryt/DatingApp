@@ -1,5 +1,6 @@
 ﻿using API.Extensions;
 using API.Middleware;
+using API.SignalR;
 
 namespace API;
 
@@ -18,6 +19,7 @@ public class Startup
         services.AddControllers();
         services.AddCors();
         services.AddIdentityService(Configuration);
+        services.AddSignalR();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -37,6 +39,10 @@ public class Startup
 
         app.UseAuthorization();
 
-        app.UseEndpoints(endpoints => endpoints.MapControllers());
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapHub<PresenceHub>("hubs/presents");
+        });
     }
 }
