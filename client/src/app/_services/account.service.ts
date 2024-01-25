@@ -11,7 +11,7 @@ import { AppConstants } from '../constants';
 })
 export class AccountService {
   baseUrl = environment.apiUrl;
-  private currentUserSource = new BehaviorSubject<User | null>(null);
+  private currentUserSource = new BehaviorSubject<User | undefined>(undefined);
   currentUser$ = this.currentUserSource.asObservable();
 
   constructor(
@@ -49,7 +49,7 @@ export class AccountService {
 
   logout() {
     localStorage.removeItem(AppConstants.USER_STORAGE_KEY);
-    this.currentUserSource.next(null);
+    this.currentUserSource.next(undefined);
   }
 
   getDecoderetToken(token: string) {

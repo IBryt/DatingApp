@@ -12,7 +12,7 @@ import { BusyService } from '../_services/busy.service';
 export class LoadingInterceptor implements HttpInterceptor {
 
   constructor(
-  private busyService: BusyService,
+    private busyService: BusyService,
   ) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {

@@ -18,7 +18,7 @@ export class PhotoEditorComponent {
   hasBaseDropZoneOver = false;
   baseUrl = environment.apiUrl
   uploader: FileUploader;
-  user: User | null = <User>{};
+  user?: User = <User>{};
 
   constructor(
     private accountService: AccountService,

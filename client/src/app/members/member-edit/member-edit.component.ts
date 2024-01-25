@@ -15,7 +15,7 @@ import { MembersService } from 'src/app/_services/members.service';
 export class MemberEditComponent {
   @ViewChild('editForm') editForm: NgForm | undefined;
   member: Member = <Member>{};
-  user: User | null = <User>{};
+  user?: User = <User>{};
   @HostListener('window:beforeunload', ['$event']) unloadNotification($event: any) {
     if (this.editForm?.dirty) {
       $event.returnValue = true;
