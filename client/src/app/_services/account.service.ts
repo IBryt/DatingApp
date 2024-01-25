@@ -5,6 +5,7 @@ import { User } from '../_model/user';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environment/environment';
 import { AppConstants } from '../constants';
+import { PresenceService } from './presence.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class AccountService {
 
   constructor(
     private http: HttpClient,
+    private presenceService: PresenceService,
   ) { }
 
   register(model: any) {
@@ -23,6 +25,7 @@ export class AccountService {
       map(user => {
         if (user) {
           this.setCurrentUser(user);
+          this.presenceService.createHubConnection(user);
         }
         return user;
       })
@@ -50,6 +53,7 @@ export class AccountService {
   logout() {
     localStorage.removeItem(AppConstants.USER_STORAGE_KEY);
     this.currentUserSource.next(undefined);
+    this.presenceService.stopHubConnection();
   }
 
   getDecoderetToken(token: string) {

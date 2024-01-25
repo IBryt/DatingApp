@@ -43,7 +43,7 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-            endpoints.MapHub<PresenceHub>("hubs/presents");
+            endpoints.MapHub<PresenceHub>("hubs/presence");
         });
     }
 }
