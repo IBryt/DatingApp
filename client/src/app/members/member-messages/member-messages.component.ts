@@ -15,7 +15,7 @@ export class MemberMessagesComponent implements OnInit {
   messageContent = '';
 
   constructor(
-    private messageService: MessageService,
+    public messageService: MessageService,
   ) { }
 
   ngOnInit(): void {
