@@ -13,15 +13,21 @@ public class MessageHub : Hub
     private readonly IMessageRepository _messageRepository;
     private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
+    private readonly IHubContext<PresenceHub> _presenceHub;
+    private readonly PresenceTracker _presenceTracker;
 
     public MessageHub(
         IMessageRepository messageRepository,
         IMapper mapper,
-        IUserRepository userRepository)
+        IUserRepository userRepository,
+        IHubContext<PresenceHub> presenceHub,
+        PresenceTracker presenceTracker)
     {
         _messageRepository = messageRepository;
         _mapper = mapper;
         _userRepository = userRepository;
+        _presenceHub = presenceHub;
+        _presenceTracker = presenceTracker;
     }
 
     public override async Task OnConnectedAsync()
@@ -74,10 +80,19 @@ public class MessageHub : Hub
 
         var groupName = GetGroupName(sender.UserName, recipient.UserName);
 
-        var group =  await _messageRepository.GetGroupAsync(groupName);
+        var group = await _messageRepository.GetGroupAsync(groupName);
         if (group.Connections.Any(x => x.Username == recipientUsername))
-        { 
+        {
             message.DateRead = DateTime.UtcNow;
+        }
+        else
+        {
+            var connections = await _presenceTracker.GetConnectionsForUserAsync(recipientUsername);
+            if (connections != null)
+            {
+                await _presenceHub.Clients.Clients(connections).SendAsync("NewMessageReceived",
+                    new { username = sender.UserName, knownAs = sender.KnownAs });
+            }
         }
 
         _messageRepository.AddMessage(message);
@@ -85,7 +100,6 @@ public class MessageHub : Hub
         {
             throw new HubException("Failed to sent message");
         }
-
 
         var messageDto = _mapper.Map<MessageDto>(message);
         await Clients.Group(groupName).SendAsync("NewMessage", messageDto);
@@ -108,7 +122,7 @@ public class MessageHub : Hub
     }
 
     private async Task RemoveFromMessageGroupAsync()
-    { 
+    {
         var connection = await _messageRepository.GetConnectionAsync(Context.ConnectionId);
         _messageRepository.RemoveConnection(connection);
         await _messageRepository.SaveAllAsync();
