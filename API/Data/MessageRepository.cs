@@ -64,18 +64,19 @@ public class MessageRepository : IMessageRepository
 
     public async Task<PagedList<MessageDto>> GetMessagesForUserAsync(MessageParams messageParams)
     {
-        var query = _context.Messages
+        var messages = _context.Messages
             .OrderByDescending(m => m.MessageSent)
+            .ProjectTo<MessageDto>(_mapper.ConfigurationProvider)
             .AsQueryable();
 
-        query = messageParams.Container switch
+        messages = messageParams.Container switch
         {
-            "Inbox" => query.Where(u => u.Recipient.UserName == messageParams.Username && !u.RecipientDeleted),
-            "Outbox" => query.Where(u => u.Sender.UserName == messageParams.Username && !u.SenderDeleted),
-            _ => query.Where(u => u.Recipient.UserName == messageParams.Username && !u.RecipientDeleted && u.DateRead == null),
+            "Inbox" => messages.Where(u => u.RecipientUsername == messageParams.Username && !u.RecipientDeleted),
+            "Outbox" => messages.Where(u => u.SenderUsername == messageParams.Username && !u.SenderDeleted),
+            _ => messages.Where(u => u.RecipientUsername == messageParams.Username && !u.RecipientDeleted && u.DateRead == null),
         };
 
-        var messages = query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
+
 
         return await PagedList<MessageDto>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
     }
@@ -83,10 +84,6 @@ public class MessageRepository : IMessageRepository
     public async Task<IEnumerable<MessageDto>> GetMessageThreadAsync(string currentUsername, string recipientUsername)
     {
         var messages = await _context.Messages
-            .Include(u => u.Sender)
-            .ThenInclude(p => p.Photos)
-            .Include(u => u.Recipient)
-            .ThenInclude(p => p.Photos)
             .Where(m =>
                 m.Recipient.UserName == currentUsername 
                 && !m.RecipientDeleted
@@ -96,11 +93,12 @@ public class MessageRepository : IMessageRepository
                 && !m.SenderDeleted
             )
             .OrderBy(m => m.MessageSent)
+            .ProjectTo<MessageDto>(_mapper.ConfigurationProvider)
             .ToListAsync();
 
         var unreadMessages = messages.Where(m =>
             m.DateRead == null
-            && m.Recipient.UserName == currentUsername
+            && m.RecipientUsername == currentUsername
             ).ToList();
 
         if (unreadMessages.Any())
@@ -111,7 +109,7 @@ public class MessageRepository : IMessageRepository
             }
         }
 
-        return _mapper.Map<IEnumerable<MessageDto>>(messages);
+        return messages;
     }
 
     public void RemoveConnection(Connection connection)

@@ -1,4 +1,6 @@
-﻿namespace API.DTOs;
+﻿using System.Text.Json.Serialization;
+
+namespace API.DTOs;
 
 public class MessageDto
 {
@@ -12,4 +14,10 @@ public class MessageDto
     public string Content { get; set; } = string.Empty;
     public DateTime? DateRead { get; set; }
     public DateTime MessageSent { get; set; }
+
+    [JsonIgnore]
+    public bool SenderDeleted { get; set; }
+
+    [JsonIgnore]
+    public bool RecipientDeleted { get; set; }
 }
