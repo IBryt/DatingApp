@@ -10,6 +10,7 @@ public interface IMessageRepository
     void RemoveConnection(Connection connection);
     Task<Connection> GetConnectionAsync(string connectionId);
     Task<Group> GetGroupAsync(string groupName);
+    Task<Group> GetGroupForConnectionAsync(string connectionId);
     void AddMessage(Message message);
     void DeleteMessage(Message message);
     Task<Message> GetMessageAsync(int id);

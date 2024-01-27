@@ -46,6 +46,14 @@ public class MessageRepository : IMessageRepository
             .FirstOrDefaultAsync(g => g.Name == groupName);
     }
 
+    public async Task<Group> GetGroupForConnectionAsync(string connectionId)
+    {
+        return await _context.Groups
+            .Include(c => c.Connections)
+            .Where(g => g.Connections.Any(x => x.ConnectionId == connectionId))
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<Message> GetMessageAsync(int id)
     {
         return await _context.Messages
