@@ -32,7 +32,7 @@
     </div>
     <div class="card-footer">
         <form #messageForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off">
-            <div class="form-group">
+            <div class="input-group">
                 <input name="messageContent" required [(ngModel)]="messageContent" class="form-control input-sm"
                     type="text" placeholder="Send a private message">
                 <div class="div input-group-append">
