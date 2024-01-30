@@ -27,7 +27,7 @@ public static class IdentityServiceExtensions
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenKey"])),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenKey"] ?? throw new ArgumentException("TokenKey cannot be found in the configuration"))),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                 };
@@ -40,7 +40,7 @@ public static class IdentityServiceExtensions
 
                         var path = context.HttpContext.Request.Path;
                         if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
-                        { 
+                        {
                             context.Token = accessToken;
                         }
                         return Task.CompletedTask;

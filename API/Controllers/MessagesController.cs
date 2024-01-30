@@ -66,7 +66,7 @@ public class MessagesController : BaseApiController
 
         var messages = await _unitOfWork.MessageRepository.GetMessagesForUserAsync(messageParams);
 
-        Response.AddPaginationHeeader(
+        Response.AddPaginationHeader(
             messages.CurrentPage,
             messages.PageSize,
             messages.TotalCount,

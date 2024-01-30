@@ -61,7 +61,7 @@ public class LikesController : BaseApiController
         likesParams.UserId = User.GetUserId();
         var users = await _unitOfWork.LikesRepository.GetUserLikes(likesParams);
 
-        Response.AddPaginationHeeader(
+        Response.AddPaginationHeader(
             users.CurrentPage,
             users.PageSize,
             users.TotalCount,

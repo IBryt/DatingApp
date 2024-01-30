@@ -1,5 +1,4 @@
-﻿using API.Data;
-using API.DTOs;
+﻿using API.DTOs;
 using API.Entities;
 using API.interfaces;
 using AutoMapper;
@@ -80,7 +79,7 @@ public class AccountController : BaseApiController
             return Unauthorized();
         }
 
-        var token = await  _tokenService.CreateToken(user);
+        var token = await _tokenService.CreateToken(user);
 
         var userDto = GetUserDto(user, token);
 

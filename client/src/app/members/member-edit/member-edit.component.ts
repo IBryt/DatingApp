@@ -1,5 +1,6 @@
 import { Component, HostListener, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs';
 import { Member } from 'src/app/_model/member';
@@ -14,7 +15,7 @@ import { MembersService } from 'src/app/_services/members.service';
 })
 export class MemberEditComponent {
   @ViewChild('editForm') editForm: NgForm | undefined;
-  member: Member = <Member>{};
+  member?: Member
   user?: User = <User>{};
   @HostListener('window:beforeunload', ['$event']) unloadNotification($event: any) {
     if (this.editForm?.dirty) {
@@ -26,6 +27,7 @@ export class MemberEditComponent {
     private accountService: AccountService,
     private membersService: MembersService,
     private toastr: ToastrService,
+    private route: ActivatedRoute,
   ) {
     this.accountService.currentUser$.pipe(take(1)).subscribe({
       next: user => {
@@ -34,6 +36,11 @@ export class MemberEditComponent {
       }
     })
 
+    this.route.data.subscribe({
+      next: data => {
+        this.member = data['member']
+      }
+    })
   }
 
   loadMember() {
@@ -45,6 +52,9 @@ export class MemberEditComponent {
   }
 
   updateMember() {
+    if (!this.member) {
+      return;
+    }
     this.membersService.updateMember(this.member).subscribe({
       next: _ => {
         this.toastr.success('Profile updated successfully');

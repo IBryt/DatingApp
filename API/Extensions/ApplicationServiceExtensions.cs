@@ -22,7 +22,7 @@ public static class ApplicationServiceExtensions
         services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
         services.AddDbContext<DataContext>(options =>
         {
-            options.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
         });
 
         return services;

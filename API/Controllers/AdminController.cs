@@ -23,7 +23,7 @@ public class AdminController : BaseApiController
             .Include(u => u.UserRoles)
             .ThenInclude(r => r.Role)
             .OrderBy(u => u.UserName)
-            .Select(u => new 
+            .Select(u => new
             {
                 u.Id,
                 Username = u.UserName,
@@ -47,7 +47,7 @@ public class AdminController : BaseApiController
 
         var user = await _userManager.FindByNameAsync(username);
 
-        if (user == null) 
+        if (user == null)
         {
             return NotFound("Could not find user");
         }
@@ -57,7 +57,7 @@ public class AdminController : BaseApiController
         var result = await _userManager.AddToRolesAsync(user, selectedRoles.Except(userRoles));
 
         if (!result.Succeeded)
-        { 
+        {
             return BadRequest(result.Errors);
         }
 
@@ -68,7 +68,7 @@ public class AdminController : BaseApiController
             return BadRequest(result.Errors);
         }
 
-        return Ok(await _userManager.GetRolesAsync(user));  
+        return Ok(await _userManager.GetRolesAsync(user));
     }
 
     [Authorize(Policy = "ModeratePhotoRole")]

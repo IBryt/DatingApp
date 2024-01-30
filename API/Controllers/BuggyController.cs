@@ -8,6 +8,7 @@ namespace API.Controllers;
 public class BuggyController : BaseApiController
 {
     private readonly DataContext _context;
+    static readonly string BestNumber = "secret text";
 
     public BuggyController(DataContext context)
     {
@@ -18,7 +19,7 @@ public class BuggyController : BaseApiController
     [HttpGet("auth")]
     public ActionResult<string> GetSecret()
     {
-        return "secret text";
+        return BestNumber;
     }
 
     [HttpGet("not-found")]

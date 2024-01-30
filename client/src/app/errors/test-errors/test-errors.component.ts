@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
+import { environment } from 'src/environment/environment';
 
 const observerOrNext = {
   next: (response: any) => console.log(response),
@@ -13,7 +14,7 @@ const observerOrNext = {
   styleUrls: ['./test-errors.component.css']
 })
 export class TestErrorsComponent {
-  baseUrl = 'https://localhost:5001/api/';
+  baseUrl = environment.apiUrl;
   validationErrors: string[] = [];
 
   constructor(

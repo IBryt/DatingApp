@@ -34,7 +34,7 @@ public class UsersController : BaseApiController
         }
 
         var members = await _unitOfWork.UserRepository.GetMembersAsync(userParams);
-        Response.AddPaginationHeeader(members.CurrentPage, members.PageSize,
+        Response.AddPaginationHeader(members.CurrentPage, members.PageSize,
             members.TotalCount, members.TotalPages);
 
         return Ok(members);
@@ -89,7 +89,6 @@ public class UsersController : BaseApiController
         if (await _unitOfWork.Complete())
         {
             return CreatedAtAction(nameof(GetUsers), new { Username = user.UserName }, _mapper.Map<PhotoDto>(photo));
-            //return CreatedAtAction("GetUsers", new { Username = user.UserName }, _mapper.Map<PhotoDto>(photo));
         }
 
         return BadRequest("Problem adding photo");

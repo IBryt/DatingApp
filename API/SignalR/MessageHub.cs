@@ -29,7 +29,11 @@ public class MessageHub : Hub
     public override async Task OnConnectedAsync()
     {
         var httpContext = Context.GetHttpContext();
-        var otherUser = httpContext.Request.Query["user"].ToString();
+        var otherUser = httpContext?.Request.Query["user"].ToString();
+        if (otherUser == null)
+        {
+            throw new HubException("otherUser cannot be null");
+        }
         var callerUser = Context.User.GetUsername();
 
         var groupName = GetGroupName(callerUser, otherUser);
@@ -47,7 +51,7 @@ public class MessageHub : Hub
         await Clients.Caller.SendAsync("ReceiveMessageThread", messages);
     }
 
-    public override async Task OnDisconnectedAsync(Exception? exception)
+    public override async Task OnDisconnectedAsync(Exception exception)
     {
         var group = await RemoveFromMessageGroupAsync();
         await Clients.Group(group.Name).SendAsync("UpdatedGroup", group);
@@ -65,6 +69,12 @@ public class MessageHub : Hub
         }
 
         var sender = await _unitOfWork.UserRepository.GetUserByUsernameAsync(username);
+
+        if (sender == null)
+        {
+            throw new HubException("Not found sender");
+        }
+
         var recipient = await _unitOfWork.UserRepository.GetUserByUsernameAsync(recipientUsername);
 
         if (recipient == null)

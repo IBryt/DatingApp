@@ -85,11 +85,11 @@ public class MessageRepository : IMessageRepository
     {
         var messages = await _context.Messages
             .Where(m =>
-                m.Recipient.UserName == currentUsername 
+                m.Recipient.UserName == currentUsername
                 && !m.RecipientDeleted
                 && m.Sender.UserName == recipientUsername
                 || m.Recipient.UserName == recipientUsername
-                && m.Sender.UserName == currentUsername 
+                && m.Sender.UserName == currentUsername
                 && !m.SenderDeleted
             )
             .OrderBy(m => m.MessageSent)

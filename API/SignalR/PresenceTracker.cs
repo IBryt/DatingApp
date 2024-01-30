@@ -47,10 +47,10 @@ public class PresenceTracker
         return Task.FromResult(isOffline);
     }
 
-    public Task<string[]> GetOnlineUsersAsync() 
+    public Task<string[]> GetOnlineUsersAsync()
     {
         string[] onlineUsers;
-        lock (OnlineUsers) 
+        lock (OnlineUsers)
         {
             onlineUsers = OnlineUsers.OrderBy(k => k.Key).Select(k => k.Key).ToArray();
         }
@@ -62,7 +62,7 @@ public class PresenceTracker
     {
         List<string> connectionIds;
         lock (OnlineUsers)
-        { 
+        {
             connectionIds = OnlineUsers.GetValueOrDefault(username);
         }
 

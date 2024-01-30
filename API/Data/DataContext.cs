@@ -11,7 +11,7 @@ namespace API.Data;
 
 public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>,
-    IdentityRoleClaim<int>,IdentityUserToken<int>>
+    IdentityRoleClaim<int>, IdentityUserToken<int>>
 {
     public DataContext(DbContextOptions options) : base(options)
     {
@@ -52,7 +52,7 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
             .WithMany(l => l.LikedByUsers)
             .HasForeignKey(l => l.LikedUserId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         builder.Entity<Message>()
             .HasOne(u => u.Recipient)
             .WithMany(u => u.MessagesReceived)

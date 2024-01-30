@@ -1,40 +1,36 @@
-using API;
-using API.Data;
-using API.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using API.Extensions;
+using API.Middleware;
 
-namespace IgorBryt.Store.WebAPI;
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddControllers();
+builder.Services.AddCors();
+builder.Services.AddIdentityService(builder.Configuration);
+builder.Services.AddSignalR();
 
-public class Program
-{
-    static async Task Main(string[] args)
-    {
-        var host  = CreateHostBuilder(args).Build();
-        using var  scope  = host.Services.CreateScope();
-        var services = scope.ServiceProvider;
-        
-        try 
-        {
-            var context = services.GetRequiredService<DataContext>();
-            var userManager = services.GetRequiredService<UserManager<AppUser>>();
-            var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-            await context.Database.MigrateAsync();
-            await Seed.SeedUsers(userManager, roleManager);
-        }
-        catch (Exception ex) 
-        {
-            var logger = services.GetRequiredService<ILogger<Program>>();
-            logger.LogError(ex, "An error occurred during migration");
-        }
+var app = builder.Build();
 
-        await host.RunAsync();
-    }
+app.UseMiddleware<ExceptionMiddleware>();
 
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>();
-            });
-}
+app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseCors(policy => policy
+    .WithOrigins("https://localhost:4200")
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials());
+
+app.UseAuthentication();
+
+app.UseAuthorization();
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+app.AddMapControllers();
+
+await app.AddSeed();
+
+app.Run();

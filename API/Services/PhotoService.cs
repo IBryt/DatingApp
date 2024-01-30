@@ -3,7 +3,6 @@ using API.Interfaces;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.Extensions.Options;
-using System.Security.Principal;
 
 namespace API.Services;
 
@@ -49,6 +48,6 @@ public class PhotoService : IPhotoService
         var deleteParams = new DeletionParams(publicId);
         var result = await _cloudinary.DestroyAsync(deleteParams);
 
-        return result;  
+        return result;
     }
 }

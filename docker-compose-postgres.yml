@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16.1-alpine3.19
+    container_name: dev
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespw
+    ports:
+      - "5433:5432"
+    networks:
+      - back
+
+
+networks:
+    back:
+        driver: bridge
