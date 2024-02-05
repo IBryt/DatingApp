@@ -34,10 +34,9 @@ public class PresenceTracker
          .ToList();
     }
 
-
-    public Task<string[]> GetConnectionsForUserAsync(string username)
+    public async Task<bool> IsOnlineAsync(string username)
     {
-        // This method needs to be removed later
-        throw new NotImplementedException();
+        var connectionCount = (int)await _db.HashGetAsync(HASH_KEY, username);
+        return connectionCount > 0;
     }
 }
