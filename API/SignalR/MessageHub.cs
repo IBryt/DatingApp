@@ -4,6 +4,7 @@ using API.Extensions;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
+using System.Text.RegularExpressions;
 
 namespace API.SignalR;
 
@@ -12,15 +13,18 @@ public class MessageHub : Hub
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly PresenceTracker _presenceTracker;
+    private readonly GroupTracker _groupTracker;
 
     public MessageHub(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        PresenceTracker presenceTracker)
+        PresenceTracker presenceTracker,
+        GroupTracker groupTracker)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _presenceTracker = presenceTracker;
+        _groupTracker = groupTracker;
     }
 
     public override async Task OnConnectedAsync()
@@ -34,18 +38,24 @@ public class MessageHub : Hub
         var callerUser = Context.User.GetUsername();
 
         var groupName = GetGroupName(callerUser, otherUser);
+
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+        await _groupTracker.AddAsync(Context.ConnectionId, groupName);
 
         await Clients.Group(groupName).SendAsync("UpdatedGroup");
 
         var messages = await _unitOfWork.MessageRepository.GetMessageThreadAsync(callerUser, otherUser);
 
-        if (_unitOfWork.HasChanges())
-        {
-            await _unitOfWork.Complete();
-        }
-
         await Clients.Caller.SendAsync("ReceiveMessageThread", messages);
+    }
+
+    public async override Task OnDisconnectedAsync(Exception exception)
+    {
+        var group = await _groupTracker.GetAsync(Context.ConnectionId);
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, group);
+        await _groupTracker.DeleteAsync(Context.ConnectionId);
+
+        await base.OnDisconnectedAsync(exception);
     }
 
     public async Task SendMessage(CreateMessageDto createMessageDto)
