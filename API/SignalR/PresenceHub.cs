@@ -36,7 +36,6 @@ public class PresenceHub : Hub
 
     public async Task GetOnlineUsers(List<string> users)
     {
-
         var currentUsers = await _presenceTracker.GetOnlineUsersAsync(users);
 
         await Clients.Caller.SendAsync("GetOnlineUsers", currentUsers);

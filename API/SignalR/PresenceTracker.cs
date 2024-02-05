@@ -1,6 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using StackExchange.Redis;
-using System.Collections.Generic;
+﻿using StackExchange.Redis;
 
 namespace API.SignalR;
 
@@ -8,103 +6,38 @@ public class PresenceTracker
 {
 
     private readonly IDatabase _db;
-    private readonly object _lock = new object();
-    private const string HASH_KEY = "hashKey";
+    private const string HASH_KEY = "online";
 
     public PresenceTracker(IConnectionMultiplexer redis)
     {
         _db = redis.GetDatabase();
     }
 
-    public Task<bool> UserConnectedAsync(string username, string connectionId)
+    public async Task<bool> UserConnectedAsync(string username, string connectionId)
     {
-        var isOnline = false;
-
-        lock (_lock)
-        {
-            if (_db.HashExists(HASH_KEY, username))
-            {
-                var currentArray = _db.HashGet(HASH_KEY, username);
-                var newArray = $"{currentArray},{connectionId}";
-                _db.HashSet(HASH_KEY, username, newArray);
-            }
-            else
-            {
-                _db.HashSet(HASH_KEY, username, connectionId);
-                isOnline = true;
-            }
-        }
-
-        return Task.FromResult(isOnline);
+        var connectionCount = await _db.HashIncrementAsync(HASH_KEY, username, 1);
+        return connectionCount == 1;
     }
 
-    public Task<bool> UserDisconnectedAsync(string username, string connectionId)
+    public async Task<bool> UserDisconnectedAsync(string username, string connectionId)
     {
-
-        var isOffline = false;
-
-        lock (_lock)
-        {
-            var currentArray = _db.HashGet(HASH_KEY, username);
-            var arrayValues = currentArray.ToString().Split(',');
-
-            arrayValues = Array.FindAll(arrayValues, v => v != connectionId);
-
-            var newArray = string.Join(",", arrayValues);
-
-            if (string.IsNullOrEmpty(newArray))
-            {
-                _db.HashDelete(HASH_KEY, username);
-                isOffline = true;
-            }
-            else
-            {
-                _db.HashSetAsync(HASH_KEY, username, newArray);
-            }
-        }
-
-        return Task.FromResult(isOffline);
+        var connectionCount = await _db.HashIncrementAsync(HASH_KEY, username, -1);
+        return connectionCount == 0;
     }
 
-
-
-    public Task<List<string>> GetOnlineUsersAsync()
+    public async Task<List<string>> GetOnlineUsersAsync(List<string> users)
     {
-        List<string> onlineUsers;
-        lock (_lock)
-        {
-            onlineUsers = _db.HashKeys(HASH_KEY).Select(x => (string)x).ToList();
-        }
-        return Task.FromResult(onlineUsers);
-    }
-
-    public Task<List<string>> GetOnlineUsersAsync(List<string> users)
-    {
-        var onlineUsers = new List<string>();
-        lock (_lock)
-        {
-            var connectionsIds = _db.HashGet(HASH_KEY, users.Select(user => (RedisValue)user).ToArray());
-
-            for (int i = 0; i< users.Count; i++)
-            {
-                if (!string.IsNullOrEmpty(connectionsIds[i]))
-                {
-                    onlineUsers.Add(users[i]);
-                }
-            }
-        }
-        return Task.FromResult(onlineUsers);
+        var connections = await _db.HashGetAsync(HASH_KEY, users.Select(user => (RedisValue)user).ToArray());
+        return connections
+         .Select((connection, index) => connection.HasValue ? users[index] : null)
+         .Where(c => c != null)
+         .ToList();
     }
 
 
     public Task<string[]> GetConnectionsForUserAsync(string username)
     {
-
-        string[] connectionIds;
-        lock (_lock)
-        {
-            connectionIds = _db.HashGet(HASH_KEY, username).ToString().Split(',').ToArray();
-        }
-        return Task.FromResult(connectionIds);
+        // This method needs to be removed later
+        throw new NotImplementedException();
     }
 }
