@@ -8,6 +8,7 @@ import { User } from '../_model/user';
 import { BehaviorSubject, take } from 'rxjs';
 import { Group } from '../_model/group';
 import { BusyService } from './busy.service';
+import { HubHelpers } from '../_helpers/hub-helpers';
 
 @Injectable({
   providedIn: 'root'
@@ -84,6 +85,7 @@ export class MessageService {
   }
 
   async sendMessage(username: string, content: string) {
+    await HubHelpers.waitForHubConnection(this.hubConnection);
     return this.hubConnection?.invoke('SendMessage', { recipientUsername: username, content })
       .catch(error => console.log(error));
   }

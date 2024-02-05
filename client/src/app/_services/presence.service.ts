@@ -5,6 +5,7 @@ import { environment } from 'src/environment/environment';
 import { User } from '../_model/user';
 import { BehaviorSubject, take } from 'rxjs';
 import { Router } from '@angular/router';
+import { HubHelpers } from '../_helpers/hub-helpers';
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +61,12 @@ export class PresenceService {
           next: _ => this.router.navigateByUrl('/members/' + username + '?tab=3')
         })
     })
+  }
+  
+  async getOnlineUsers(users: string[]): Promise<any> {
+    await HubHelpers.waitForHubConnection(this.hubConnection);
+    return this.hubConnection?.invoke('GetOnlineUsers', users)
+      .catch(error => console.log(error));
   }
 
   stopHubConnection() {

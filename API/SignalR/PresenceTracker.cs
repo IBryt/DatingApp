@@ -1,23 +1,36 @@
-﻿namespace API.SignalR;
+﻿using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
+using System.Collections.Generic;
+
+namespace API.SignalR;
 
 public class PresenceTracker
 {
-    private static readonly Dictionary<string, List<string>> OnlineUsers
-        = new Dictionary<string, List<string>>();
+
+    private readonly IDatabase _db;
+    private readonly object _lock = new object();
+    private const string HASH_KEY = "hashKey";
+
+    public PresenceTracker(IConnectionMultiplexer redis)
+    {
+        _db = redis.GetDatabase();
+    }
 
     public Task<bool> UserConnectedAsync(string username, string connectionId)
     {
         var isOnline = false;
 
-        lock (OnlineUsers)
+        lock (_lock)
         {
-            if (OnlineUsers.ContainsKey(username))
+            if (_db.HashExists(HASH_KEY, username))
             {
-                OnlineUsers[username].Add(connectionId);
+                var currentArray = _db.HashGet(HASH_KEY, username);
+                var newArray = $"{currentArray},{connectionId}";
+                _db.HashSet(HASH_KEY, username, newArray);
             }
             else
             {
-                OnlineUsers.Add(username, new List<string>() { connectionId });
+                _db.HashSet(HASH_KEY, username, connectionId);
                 isOnline = true;
             }
         }
@@ -27,45 +40,71 @@ public class PresenceTracker
 
     public Task<bool> UserDisconnectedAsync(string username, string connectionId)
     {
+
         var isOffline = false;
 
-        lock (OnlineUsers)
+        lock (_lock)
         {
-            if (!OnlineUsers.ContainsKey(username))
-            {
-                return Task.FromResult(isOffline);
-            }
+            var currentArray = _db.HashGet(HASH_KEY, username);
+            var arrayValues = currentArray.ToString().Split(',');
 
-            OnlineUsers[username].Remove(connectionId);
-            if (OnlineUsers[username].Count == 0)
+            arrayValues = Array.FindAll(arrayValues, v => v != connectionId);
+
+            var newArray = string.Join(",", arrayValues);
+
+            if (string.IsNullOrEmpty(newArray))
             {
-                OnlineUsers.Remove(username);
+                _db.HashDelete(HASH_KEY, username);
                 isOffline = true;
+            }
+            else
+            {
+                _db.HashSetAsync(HASH_KEY, username, newArray);
             }
         }
 
         return Task.FromResult(isOffline);
     }
 
-    public Task<string[]> GetOnlineUsersAsync()
-    {
-        string[] onlineUsers;
-        lock (OnlineUsers)
-        {
-            onlineUsers = OnlineUsers.OrderBy(k => k.Key).Select(k => k.Key).ToArray();
-        }
 
+
+    public Task<List<string>> GetOnlineUsersAsync()
+    {
+        List<string> onlineUsers;
+        lock (_lock)
+        {
+            onlineUsers = _db.HashKeys(HASH_KEY).Select(x => (string)x).ToList();
+        }
         return Task.FromResult(onlineUsers);
     }
 
-    public Task<List<string>> GetConnectionsForUserAsync(string username)
+    public Task<List<string>> GetOnlineUsersAsync(List<string> users)
     {
-        List<string> connectionIds;
-        lock (OnlineUsers)
+        var onlineUsers = new List<string>();
+        lock (_lock)
         {
-            connectionIds = OnlineUsers.GetValueOrDefault(username);
-        }
+            var connectionsIds = _db.HashGet(HASH_KEY, users.Select(user => (RedisValue)user).ToArray());
 
+            for (int i = 0; i< users.Count; i++)
+            {
+                if (!string.IsNullOrEmpty(connectionsIds[i]))
+                {
+                    onlineUsers.Add(users[i]);
+                }
+            }
+        }
+        return Task.FromResult(onlineUsers);
+    }
+
+
+    public Task<string[]> GetConnectionsForUserAsync(string username)
+    {
+
+        string[] connectionIds;
+        lock (_lock)
+        {
+            connectionIds = _db.HashGet(HASH_KEY, username).ToString().Split(',').ToArray();
+        }
         return Task.FromResult(connectionIds);
     }
 }

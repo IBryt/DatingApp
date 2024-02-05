@@ -4,6 +4,7 @@ import { Pagination } from 'src/app/_model/pagination';
 import { User } from 'src/app/_model/user';
 import { UserParams } from 'src/app/_model/userParams';
 import { MembersService } from 'src/app/_services/members.service';
+import { PresenceService } from 'src/app/_services/presence.service';
 
 @Component({
   selector: 'app-member-list',
@@ -20,7 +21,7 @@ export class MemberListComponent implements OnInit {
 
   constructor(
     private memberService: MembersService,
-
+    private presenceService: PresenceService,
   ) {
     this.userParams = this.memberService.getUserParams();
   }
@@ -34,11 +35,20 @@ export class MemberListComponent implements OnInit {
       this.memberService.getMembers(this.userParams).subscribe({
         next: response => {
           this.members = response.result;
+          this.getOnlineUsers();
           this.pagination = response.pagination;
         }
       });
     }
   }
+
+  getOnlineUsers() {
+    if (!this.members) {
+      return;
+    }
+    this.presenceService.getOnlineUsers(this.members.map(x => x.userName));
+  };
+
 
   resetFilters() {
     if (this.user) {

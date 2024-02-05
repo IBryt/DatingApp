@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240129165020_PostgresInitial")]
+    [Migration("20240205052809_PostgresInitial")]
     partial class PostgresInitial
     {
         /// <inheritdoc />
@@ -66,7 +66,6 @@ namespace API.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -74,7 +73,6 @@ namespace API.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Country")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("Created")
@@ -91,19 +89,15 @@ namespace API.Data.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Gender")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Interests")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Introduction")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("KnownAs")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("LastActive")
@@ -116,7 +110,6 @@ namespace API.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LookingFor")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("NormalizedEmail")
@@ -182,7 +175,6 @@ namespace API.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("ConnectionId");
@@ -211,7 +203,6 @@ namespace API.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("DateRead")
@@ -227,7 +218,6 @@ namespace API.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("RecipientUsername")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("SenderDeleted")
@@ -237,7 +227,6 @@ namespace API.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("SenderUsername")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -264,11 +253,9 @@ namespace API.Data.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("PublicId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Url")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");

@@ -42,6 +42,7 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
     this.route.data.subscribe({
       next: data => {
         this.member = data['member']
+        this.getOnlineUser(this.member.userName)
       }
     })
 
@@ -72,6 +73,10 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   selectTab(tabId: number) {
     this.memberTabs!.tabs[tabId].active = true;
   }
+
+  getOnlineUser(username: string) {
+    this.presenceService.getOnlineUsers([username]);
+  };
 
   loadMessages() {
     if (this.member) {

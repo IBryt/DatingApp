@@ -21,9 +21,6 @@ public class PresenceHub : Hub
         {
             await Clients.Others.SendAsync("UserIsOnline", Context.User.GetUsername());
         }
-
-        var currentUsers = await _presenceTracker.GetOnlineUsersAsync();
-        await Clients.Caller.SendAsync("GetOnlineUsers", currentUsers);
     }
 
     public override async Task OnDisconnectedAsync(Exception exception)
@@ -34,7 +31,14 @@ public class PresenceHub : Hub
             await Clients.Others.SendAsync("UserIsOffline", Context.User.GetUsername());
         }
 
-
         await base.OnDisconnectedAsync(exception);
+    }
+
+    public async Task GetOnlineUsers(List<string> users)
+    {
+
+        var currentUsers = await _presenceTracker.GetOnlineUsersAsync(users);
+
+        await Clients.Caller.SendAsync("GetOnlineUsers", currentUsers);
     }
 }

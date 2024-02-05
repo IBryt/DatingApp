@@ -34,15 +34,15 @@ namespace API.Data.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    KnownAs = table.Column<string>(type: "text", nullable: false),
+                    KnownAs = table.Column<string>(type: "text", nullable: true),
                     Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastActive = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Gender = table.Column<string>(type: "text", nullable: false),
-                    Introduction = table.Column<string>(type: "text", nullable: false),
-                    LookingFor = table.Column<string>(type: "text", nullable: false),
-                    Interests = table.Column<string>(type: "text", nullable: false),
-                    City = table.Column<string>(type: "text", nullable: false),
-                    Country = table.Column<string>(type: "text", nullable: false),
+                    Gender = table.Column<string>(type: "text", nullable: true),
+                    Introduction = table.Column<string>(type: "text", nullable: true),
+                    LookingFor = table.Column<string>(type: "text", nullable: true),
+                    Interests = table.Column<string>(type: "text", nullable: true),
+                    City = table.Column<string>(type: "text", nullable: true),
+                    Country = table.Column<string>(type: "text", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -211,10 +211,10 @@ namespace API.Data.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     SenderId = table.Column<int>(type: "integer", nullable: false),
-                    SenderUsername = table.Column<string>(type: "text", nullable: false),
+                    SenderUsername = table.Column<string>(type: "text", nullable: true),
                     RecipientId = table.Column<int>(type: "integer", nullable: false),
-                    RecipientUsername = table.Column<string>(type: "text", nullable: false),
-                    Content = table.Column<string>(type: "text", nullable: false),
+                    RecipientUsername = table.Column<string>(type: "text", nullable: true),
+                    Content = table.Column<string>(type: "text", nullable: true),
                     DateRead = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     MessageSent = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     SenderDeleted = table.Column<bool>(type: "boolean", nullable: false),
@@ -243,9 +243,9 @@ namespace API.Data.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Url = table.Column<string>(type: "text", nullable: false),
+                    Url = table.Column<string>(type: "text", nullable: true),
                     IsMain = table.Column<bool>(type: "boolean", nullable: false),
-                    PublicId = table.Column<string>(type: "text", nullable: false),
+                    PublicId = table.Column<string>(type: "text", nullable: true),
                     AppUserId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -264,7 +264,7 @@ namespace API.Data.Migrations
                 columns: table => new
                 {
                     ConnectionId = table.Column<string>(type: "text", nullable: false),
-                    Username = table.Column<string>(type: "text", nullable: false),
+                    Username = table.Column<string>(type: "text", nullable: true),
                     GroupName = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
