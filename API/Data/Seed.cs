@@ -14,8 +14,7 @@ public static class Seed
             return;
         }
 
-        var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
-        var users = JsonSerializer.Deserialize<IEnumerable<AppUser>>(userData);
+        var users = await GetUsers();
 
         var roles = new List<AppRole>
             {
@@ -31,11 +30,6 @@ public static class Seed
 
         foreach (var user in users)
         {
-            user.UserName = user.UserName.ToLower();
-
-            user.DateOfBirth = DateTime.SpecifyKind(user.DateOfBirth, DateTimeKind.Utc);
-            user.Created = DateTime.SpecifyKind(user.Created, DateTimeKind.Utc);
-            user.LastActive = DateTime.SpecifyKind(user.LastActive, DateTimeKind.Utc);
             await userManager.CreateAsync(user, "Pa$$w0rd");
             await userManager.AddToRoleAsync(user, "Member");
         }
@@ -48,4 +42,21 @@ public static class Seed
         await userManager.CreateAsync(admin, "Pa$$w0rd");
         await userManager.AddToRolesAsync(admin, new[] { "Admin", "Moderator" });
     }
+
+    public static async Task<IEnumerable<AppUser>> GetUsers()
+    {
+        var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
+        var users = JsonSerializer.Deserialize<IEnumerable<AppUser>>(userData);
+
+        foreach (var user in users)
+        {
+            user.UserName = user.UserName.ToLower();
+            user.DateOfBirth = DateTime.SpecifyKind(user.DateOfBirth, DateTimeKind.Utc);
+            user.Created = DateTime.SpecifyKind(user.Created, DateTimeKind.Utc);
+            user.LastActive = DateTime.SpecifyKind(user.LastActive, DateTimeKind.Utc);
+        }
+
+        return users;
+    }
+
 }

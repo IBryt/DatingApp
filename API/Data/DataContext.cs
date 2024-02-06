@@ -17,6 +17,10 @@ public class DataContext : IdentityDbContext<AppUser, AppRole, int,
     {
     }
 
+    public DataContext()
+    {
+    }
+
     public DbSet<UserLike> Likes { get; set; }
     public DbSet<Message> Messages { get; set; }
 
