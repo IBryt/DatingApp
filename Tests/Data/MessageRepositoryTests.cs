@@ -26,10 +26,10 @@ public class MessageRepositoryTests
     }
 
     [Test]
-    public void AddMessage_ShouldReturnMessageWithId()
+    public async Task AddMessage_ShouldReturnMessageWithId()
     {
         // Act
-        _messageRepository.AddMessage(_message);
+        await _messageRepository.AddMessageAsync(_message);
         _context.SaveChanges();
 
         // Assert
@@ -37,10 +37,10 @@ public class MessageRepositoryTests
     }
 
     [Test]
-    public void DeleteMessage_ShouldRemoveMessage()
+    public async Task DeleteMessage_ShouldRemoveMessage()
     {
         // Arrange
-        _messageRepository.AddMessage(_message);
+        await _messageRepository.AddMessageAsync(_message);
         _context.SaveChanges();
 
         // Act
@@ -55,7 +55,7 @@ public class MessageRepositoryTests
     public async Task GetMessageAsync_ShouldReturnMessageByIdIfExist(int id, int expectedId)
     {
         // Arrange
-        _messageRepository.AddMessage(_message);
+        await _messageRepository.AddMessageAsync(_message);
         _context.SaveChanges();
 
         // Act
@@ -70,7 +70,7 @@ public class MessageRepositoryTests
     {
         // Arrange
         int id = 2;
-        _messageRepository.AddMessage(_message);
+        await _messageRepository.AddMessageAsync(_message);
         _context.SaveChanges();
 
         // Act

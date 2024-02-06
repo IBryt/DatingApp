@@ -16,12 +16,17 @@ public class LikesRepository : ILikesRepository
         _context = context;
     }
 
-    public async Task<UserLike> GetUserLike(int sourceUserId, int likedUserId)
+    public async Task AddLikeAsync(UserLike userLike)
+    {
+        await _context.Likes.AddAsync(userLike);
+    }
+
+    public async Task<UserLike> GetUserLikeAsync(int sourceUserId, int likedUserId)
     {
         return await _context.Likes.FindAsync(sourceUserId, likedUserId);
     }
 
-    public async Task<PagedList<LikeDto>> GetUserLikes(LikesParams likesParams)
+    public async Task<PagedList<LikeDto>> GetUserLikesAsync(LikesParams likesParams)
     {
         var users = _context.Users.OrderBy(u => u.UserName).AsQueryable();
         var likes = _context.Likes.AsQueryable();
@@ -50,7 +55,7 @@ public class LikesRepository : ILikesRepository
         return await PagedList<LikeDto>.CreateAsync(likedUsers, likesParams.PageNumber, likesParams.PageSize);
     }
 
-    public async Task<AppUser> GetUserWithLikes(int userId)
+    public async Task<AppUser> GetUserWithLikesAsync(int userId)
     {
         return await _context.Users
             .Include(u => u.LikedUsers)

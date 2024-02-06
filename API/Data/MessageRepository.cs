@@ -19,9 +19,9 @@ public class MessageRepository : IMessageRepository
         _mapper = mapper;
     }
 
-    public void AddMessage(Message message)
+    public async Task AddMessageAsync(Message message)
     {
-        _context.Messages.Add(message);
+        await _context.Messages.AddAsync(message);
     }
 
     public void DeleteMessage(Message message)

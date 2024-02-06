@@ -98,7 +98,7 @@ public class MessageHub : Hub
             message.DateRead = DateTime.UtcNow;
         }
 
-        _unitOfWork.MessageRepository.AddMessage(message);
+        await _unitOfWork.MessageRepository.AddMessageAsync(message);
         if (!await _unitOfWork.Complete())
         {
             throw new HubException("Failed to sent message");

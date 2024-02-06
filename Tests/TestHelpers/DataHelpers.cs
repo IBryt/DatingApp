@@ -47,7 +47,7 @@ public static class DataHelpers
         return options;
     }
 
-    public static T DeepClone<T>(T obj)
+    private static T DeepClone<T>(T obj)
     {
         string jsonString = JsonSerializer.Serialize(obj);
         return JsonSerializer.Deserialize<T>(jsonString);

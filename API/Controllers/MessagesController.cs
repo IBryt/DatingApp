@@ -49,7 +49,7 @@ public class MessagesController : BaseApiController
             Content = createMessageDto.Content
         };
 
-        _unitOfWork.MessageRepository.AddMessage(message);
+        await _unitOfWork.MessageRepository.AddMessageAsync(message);
         if (!await _unitOfWork.Complete())
         {
             return BadRequest("Failed to sent message");
