@@ -1,14 +1,15 @@
-﻿using StackExchange.Redis;
+﻿using API.Interfaces.Repositories;
+using StackExchange.Redis;
 
-namespace API.SignalR;
+namespace API.Data.Repositories;
 
-public class PresenceTracker
+public class PresenceRepository : IPresenceRepository
 {
 
     private readonly IDatabase _db;
     private const string HASH_KEY = "online";
 
-    public PresenceTracker(IConnectionMultiplexer redis)
+    public PresenceRepository(IConnectionMultiplexer redis)
     {
         _db = redis.GetDatabase();
     }

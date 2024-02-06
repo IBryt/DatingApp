@@ -1,4 +1,5 @@
-﻿using API.DTOs;
+﻿using API.Data.Repositories;
+using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Interfaces;
@@ -12,19 +13,19 @@ public class MessageHub : Hub
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-    private readonly PresenceTracker _presenceTracker;
-    private readonly GroupTracker _groupTracker;
+    private readonly PresenceRepository _presenceRepository;
+    private readonly GroupRepository _groupRepository;
 
     public MessageHub(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        PresenceTracker presenceTracker,
-        GroupTracker groupTracker)
+        PresenceRepository presenceRepository,
+        GroupRepository groupRepository)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
-        _presenceTracker = presenceTracker;
-        _groupTracker = groupTracker;
+        _presenceRepository = presenceRepository;
+        _groupRepository = groupRepository;
     }
 
     public override async Task OnConnectedAsync()
@@ -40,7 +41,7 @@ public class MessageHub : Hub
         var groupName = GetGroupName(callerUser, otherUser);
 
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-        await _groupTracker.AddAsync(Context.ConnectionId, groupName);
+        await _groupRepository.AddAsync(Context.ConnectionId, groupName);
 
         await Clients.Group(groupName).SendAsync("UpdatedGroup");
 
@@ -51,9 +52,9 @@ public class MessageHub : Hub
 
     public async override Task OnDisconnectedAsync(Exception exception)
     {
-        var group = await _groupTracker.GetAsync(Context.ConnectionId);
+        var group = await _groupRepository.GetAsync(Context.ConnectionId);
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, group);
-        await _groupTracker.DeleteAsync(Context.ConnectionId);
+        await _groupRepository.DeleteAsync(Context.ConnectionId);
 
         await base.OnDisconnectedAsync(exception);
     }
@@ -93,7 +94,7 @@ public class MessageHub : Hub
 
         var groupName = GetGroupName(sender.UserName, recipient.UserName);
 
-        if (await _presenceTracker.IsOnlineAsync(recipientUsername))
+        if (await _presenceRepository.IsOnlineAsync(recipientUsername))
         {
             message.DateRead = DateTime.UtcNow;
         }

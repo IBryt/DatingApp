@@ -2,10 +2,10 @@
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Data;
+namespace API.Data.Repositories;
 
 public class LikesRepository : ILikesRepository
 {

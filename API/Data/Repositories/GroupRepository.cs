@@ -1,13 +1,14 @@
-﻿using StackExchange.Redis;
+﻿using API.Interfaces.Repositories;
+using StackExchange.Redis;
 
-namespace API.SignalR;
+namespace API.Data.Repositories;
 
-public class GroupTracker
+public class GroupRepository : IGroupRepository
 {
     private readonly IDatabase _db;
     private const string HASH_KEY = "group";
 
-    public GroupTracker(IConnectionMultiplexer redis)
+    public GroupRepository(IConnectionMultiplexer redis)
     {
         _db = redis.GetDatabase();
     }

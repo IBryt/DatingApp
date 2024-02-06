@@ -1,7 +1,8 @@
 ﻿using API.Data;
+using API.Data.Repositories;
 using API.Entities;
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using Tests.TestHelpers;

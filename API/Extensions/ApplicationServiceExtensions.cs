@@ -1,9 +1,9 @@
 ﻿using API.Data;
+using API.Data.Repositories;
 using API.Helpers;
 using API.interfaces;
 using API.Interfaces;
 using API.Services;
-using API.SignalR;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
@@ -14,8 +14,8 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddSingleton<PresenceTracker>();
-        services.AddSingleton<GroupTracker>();
+        services.AddSingleton<PresenceRepository>();
+        services.AddSingleton<GroupRepository>();
         services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IPhotoService, PhotoService>();

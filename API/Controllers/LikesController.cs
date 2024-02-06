@@ -47,7 +47,7 @@ public class LikesController : BaseApiController
         };
 
         await _unitOfWork.LikesRepository.AddLikeAsync(userLike);
-        //sourceUser.LikedUsers.Add(userLike);
+ 
         if (await _unitOfWork.Complete())
         {
             return Ok();

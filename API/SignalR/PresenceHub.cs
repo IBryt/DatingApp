@@ -1,4 +1,5 @@
-﻿using API.Extensions;
+﻿using API.Data.Repositories;
+using API.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
@@ -7,16 +8,16 @@ namespace API.SignalR;
 [Authorize]
 public class PresenceHub : Hub
 {
-    private readonly PresenceTracker _presenceTracker;
+    private readonly PresenceRepository _presenceRepository;
 
-    public PresenceHub(PresenceTracker presenceTracker)
+    public PresenceHub(PresenceRepository presenceRepository)
     {
-        _presenceTracker = presenceTracker;
+        _presenceRepository = presenceRepository;
     }
 
     public override async Task OnConnectedAsync()
     {
-        var isOnline = await _presenceTracker.UserConnectedAsync(Context.User.GetUsername(), Context.ConnectionId);
+        var isOnline = await _presenceRepository.UserConnectedAsync(Context.User.GetUsername(), Context.ConnectionId);
         if (isOnline)
         {
             await Clients.Others.SendAsync("UserIsOnline", Context.User.GetUsername());
@@ -25,7 +26,7 @@ public class PresenceHub : Hub
 
     public override async Task OnDisconnectedAsync(Exception exception)
     {
-        var isOffline = await _presenceTracker.UserDisconnectedAsync(Context.User.GetUsername(), Context.ConnectionId);
+        var isOffline = await _presenceRepository.UserDisconnectedAsync(Context.User.GetUsername(), Context.ConnectionId);
         if (isOffline)
         {
             await Clients.Others.SendAsync("UserIsOffline", Context.User.GetUsername());
@@ -36,7 +37,7 @@ public class PresenceHub : Hub
 
     public async Task GetOnlineUsers(List<string> users)
     {
-        var currentUsers = await _presenceTracker.GetOnlineUsersAsync(users);
+        var currentUsers = await _presenceRepository.GetOnlineUsersAsync(users);
 
         await Clients.Caller.SendAsync("GetOnlineUsers", currentUsers);
     }

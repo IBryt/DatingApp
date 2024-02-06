@@ -1,7 +1,8 @@
 ﻿using API.Data;
+using API.Data.Repositories;
 using API.Entities;
 using API.Helpers;
-using API.Interfaces;
+using API.Interfaces.Repositories;
 using NUnit.Framework;
 using Tests.TestHelpers;
 
@@ -11,14 +12,12 @@ public class LikesRepositoryTest
 {
     private DataContext _context;
     private ILikesRepository _likesRepository;
-    private List<AppUser> _users;
     private AppUser _sourceUser;
     private AppUser _likedUser;
 
     [SetUp]
     public void SetUp()
     {
-        _users = DataHelpers.GetUsers();
         _context = DataHelpers.GetDatabase();
         _likesRepository = new LikesRepository(_context);
         _sourceUser = _context.Users.Find(1);
