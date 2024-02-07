@@ -22,6 +22,7 @@ public class UserRepositoryTests
     {
         _users = DataHelpers.GetUsers();
         _context = DataHelpers.GetDatabase();
+        DataHelpers.AddUsers(_context);
         _userRepository = new UserRepository(_context, DataHelpers.GetMapperProfile());
     }
 

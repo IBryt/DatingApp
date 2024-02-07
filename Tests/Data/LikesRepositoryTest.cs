@@ -19,6 +19,7 @@ public class LikesRepositoryTest
     public void SetUp()
     {
         _context = DataHelpers.GetDatabase();
+        DataHelpers.AddUsers(_context);
         _likesRepository = new LikesRepository(_context);
         _sourceUser = _context.Users.Find(1);
         _likedUser = _context.Users.Find(2);

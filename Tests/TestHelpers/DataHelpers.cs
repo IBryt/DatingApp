@@ -18,16 +18,17 @@ public static class DataHelpers
 
     public static  DataContext GetDatabase()
     {
-        var context = new DataContext(GetUnitTestDbContextOptions());
+        return new DataContext(GetUnitTestDbContextOptions());
+    }
 
+    public static void AddUsers(DataContext context)
+    {
         foreach (var user in GetUsers())
         {
             context.Users.Add(user);
         }
-        
-        context.SaveChanges();
 
-        return context;
+        context.SaveChanges();
     }
 
     public static IMapper GetMapperProfile()

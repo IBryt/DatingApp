@@ -31,6 +31,12 @@ app.UseStaticFiles();
 
 app.AddMapControllers();
 
-await app.AddSeed();
+
+if (app.Environment.IsDevelopment())
+{
+    await app.AddSeed();
+}
 
 app.Run();
+
+public partial class Program { }

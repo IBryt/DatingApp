@@ -20,10 +20,11 @@ public class MessageRepositoryTests
     public void SetUp()
     {
         _context = DataHelpers.GetDatabase();
+        DataHelpers.AddUsers(_context);
         _messageRepository = new MessageRepository(_context, DataHelpers.GetMapperProfile());
         _sender = _context.Users.Find(1);
         _recipient = _context.Users.Find(2);
-        _message = NewMessage(_sender, _recipient); ;
+        _message = NewMessage(_sender, _recipient);
     }
 
     [Test]
