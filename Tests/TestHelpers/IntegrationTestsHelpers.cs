@@ -27,12 +27,17 @@ public static  class IntegrationTestsHelpers
             Username = login,
             Password = password,
         };
-        var content = new StringContent(JsonSerializer.Serialize(loginDto), Encoding.UTF8, "application/json");
+        var content = StringContent(loginDto);
 
         var httpResponse = await client.PostAsync(RequestUri + "/login", content);
 
         var actual = await DeserializeResponse<UserDto>(httpResponse);
 
         return actual.Token;
+    }
+
+    public static StringContent StringContent<T>(T obj)
+    { 
+        return new StringContent(JsonSerializer.Serialize(obj), Encoding.UTF8, "application/json");
     }
 }

@@ -94,8 +94,8 @@ public class MessagesController : BaseApiController
         if (message.Recipient.UserName == username)
         {
             message.RecipientDeleted = true;
-        }
 
+        }
         if (message.SenderDeleted && message.RecipientDeleted)
         {
             _unitOfWork.MessageRepository.DeleteMessage(message);

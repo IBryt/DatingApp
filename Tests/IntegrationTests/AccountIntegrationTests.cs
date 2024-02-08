@@ -42,7 +42,7 @@ public class AccountIntegrationTests
             Country = "country",
             Password = "Pa$$w0rd",
         };
-        var content = new StringContent(JsonSerializer.Serialize(registerDto), Encoding.UTF8, "application/json");
+        var content = IntegrationTestsHelpers.StringContent(registerDto);
 
         // act
         var httpResponse = await _client.PostAsync(RequestUri + "/register", content);
@@ -71,7 +71,7 @@ public class AccountIntegrationTests
             Country = "country",
             Password = "",
         };
-        var content = new StringContent(JsonSerializer.Serialize(registerDto), Encoding.UTF8, "application/json");
+        var content = IntegrationTestsHelpers.StringContent(registerDto);
 
         // act
         var httpResponse = await _client.PostAsync(RequestUri + "/register", content);
@@ -94,7 +94,7 @@ public class AccountIntegrationTests
             Country = "country",
             Password = "",
         };
-        var content = new StringContent(JsonSerializer.Serialize(registerDto), Encoding.UTF8, "application/json");
+        var content = IntegrationTestsHelpers.StringContent(registerDto);
 
         // act
         var httpResponse = await _client.PostAsync(RequestUri + "/register", content);
@@ -117,7 +117,7 @@ public class AccountIntegrationTests
             Country = "country",
             Password = "12345",
         };
-        var content = new StringContent(JsonSerializer.Serialize(registerDto), Encoding.UTF8, "application/json");
+        var content = IntegrationTestsHelpers.StringContent(registerDto);
 
         // act
         var httpResponse = await _client.PostAsync(RequestUri + "/register", content);
@@ -136,7 +136,7 @@ public class AccountIntegrationTests
             Username = "lisa",
             Password = "Pa$$w0rd",
         };
-        var content = new StringContent(JsonSerializer.Serialize(loginDto), Encoding.UTF8, "application/json");
+        var content = IntegrationTestsHelpers.StringContent(loginDto);
 
         // act
         var httpResponse = await _client.PostAsync(RequestUri + "/login", content);
@@ -158,7 +158,7 @@ public class AccountIntegrationTests
             Username = "lisa",
             Password = "",
         };
-        var content = new StringContent(JsonSerializer.Serialize(loginDto), Encoding.UTF8, "application/json");
+        var content = IntegrationTestsHelpers.StringContent(loginDto);
 
         // act
         var httpResponse = await _client.PostAsync(RequestUri + "/login", content);
