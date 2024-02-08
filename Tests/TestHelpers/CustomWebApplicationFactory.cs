@@ -50,7 +50,7 @@ public class CustomWebApplicationFactory<TProgram>
         var sp = services.BuildServiceProvider();
         using var scope = sp.CreateScope();
 
-        var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+        using var context = scope.ServiceProvider.GetRequiredService<DataContext>();
 
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();

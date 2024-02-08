@@ -28,6 +28,11 @@ public class LikesRepository : ILikesRepository
 
     public async Task<PagedList<LikeDto>> GetUserLikesAsync(LikesParams likesParams)
     {
+        if (string.IsNullOrEmpty(likesParams.Predicate))
+        {
+            throw new ArgumentException("This cannot be empty", likesParams.Predicate);
+        }
+
         var users = _context.Users.OrderBy(u => u.UserName).AsQueryable();
         var likes = _context.Likes.AsQueryable();
 
