@@ -15,10 +15,17 @@ public class AccountIntegrationTests
     private const string RequestUri = "api/account";
 
     [SetUp]
-    public void Init()
+    public void Setup()
     {
         _factory = new CustomWebApplicationFactory<Program>();
         _client = _factory.CreateClient();
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _factory.Dispose();
+        _client.Dispose();
     }
 
     [Test]

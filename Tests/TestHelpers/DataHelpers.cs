@@ -2,6 +2,7 @@
 using API.Entities;
 using API.Helpers;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
@@ -9,13 +10,6 @@ namespace Tests.TestHelpers;
 
 public static class DataHelpers
 {
-    private static List<AppUser> users = (Seed.GetUsers()).GetAwaiter().GetResult().ToList();
-
-    public static List<AppUser> GetUsers()
-    {
-      return DeepClone(users);
-    }
-
     public static  DataContext GetDatabase()
     {
         return new DataContext(GetUnitTestDbContextOptions());
@@ -23,7 +17,7 @@ public static class DataHelpers
 
     public static void AddUsers(DataContext context)
     {
-        foreach (var user in GetUsers())
+        foreach (var user in Seed.GetUsers())
         {
             context.Users.Add(user);
         }
@@ -39,6 +33,18 @@ public static class DataHelpers
         return new Mapper(configuration);
     }
 
+    public static async Task AddModerator (UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
+    {
+
+        var admin = new AppUser
+        {
+            UserName = "moderator",
+        };
+
+        await userManager.CreateAsync(admin, "Pa$$w0rd");
+        await userManager.AddToRolesAsync(admin, new[] { "Moderator" });
+    }
+
     private static DbContextOptions GetUnitTestDbContextOptions()
     {
         var options = new DbContextOptionsBuilder<DataContext>()
@@ -46,11 +52,5 @@ public static class DataHelpers
             .Options;
 
         return options;
-    }
-
-    private static T DeepClone<T>(T obj)
-    {
-        string jsonString = JsonSerializer.Serialize(obj);
-        return JsonSerializer.Deserialize<T>(jsonString);
     }
 }

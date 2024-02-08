@@ -20,7 +20,7 @@ public class UserRepositoryTests
     [SetUp]
     public void SetUp()
     {
-        _users = DataHelpers.GetUsers();
+        _users = Seed.GetUsers();
         _context = DataHelpers.GetDatabase();
         DataHelpers.AddUsers(_context);
         _userRepository = new UserRepository(_context, DataHelpers.GetMapperProfile());

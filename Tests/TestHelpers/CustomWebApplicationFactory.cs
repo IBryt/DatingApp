@@ -40,13 +40,25 @@ public class CustomWebApplicationFactory<TProgram>
                 options.UseInMemoryDatabase("InMemoryDatabase");
             });
 
-
-            var sp = services.BuildServiceProvider();
-            using var scope = sp.CreateScope();
-            var scopedServices = scope.ServiceProvider;
-            var userManager = scopedServices.GetRequiredService<UserManager<AppUser>>();
-            var roleManager = scopedServices.GetRequiredService<RoleManager<AppRole>>();
-            (Seed.SeedUsers(userManager, roleManager)).GetAwaiter().GetResult();
+            InitData(services).GetAwaiter().GetResult();
         });
+    }
+
+
+    private async Task InitData(IServiceCollection services)
+    {
+        var sp = services.BuildServiceProvider();
+        using var scope = sp.CreateScope();
+
+        var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+        context.Database.EnsureDeleted();
+        context.Database.EnsureCreated();
+
+        var scopedServices = scope.ServiceProvider;
+        var userManager = scopedServices.GetRequiredService<UserManager<AppUser>>();
+        var roleManager = scopedServices.GetRequiredService<RoleManager<AppRole>>();
+        await Seed.SeedUsers(userManager, roleManager);
+        await DataHelpers.AddModerator(userManager, roleManager);
     }
 }

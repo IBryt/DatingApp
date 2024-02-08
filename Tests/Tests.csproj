@@ -3,7 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <!--<Nullable>enable</Nullable>-->
+	<!--<NoWarn>8618,8619,8601,8603,8604</NoWarn>-->
   </PropertyGroup>
 
   <ItemGroup>

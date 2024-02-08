@@ -34,8 +34,9 @@ public class AdminController : BaseApiController
         return Ok(users);
     }
 
+    [Authorize(Policy = "RequiredAdminRole")]
     [HttpPost("edit-roles/{username}")]
-    public async Task<ActionResult> EditRoles(string username, [FromQuery] string roles)
+    public async Task<ActionResult<IEnumerable<string>>> EditRoles(string username, [FromQuery] string roles)
     {
 
         if (string.IsNullOrEmpty(roles))
