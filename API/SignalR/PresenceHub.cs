@@ -1,5 +1,5 @@
-﻿using API.Data.Repositories;
-using API.Extensions;
+﻿using API.Extensions;
+using API.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
@@ -8,9 +8,9 @@ namespace API.SignalR;
 [Authorize]
 public class PresenceHub : Hub
 {
-    private readonly PresenceRepository _presenceRepository;
+    private readonly IPresenceRepository _presenceRepository;
 
-    public PresenceHub(PresenceRepository presenceRepository)
+    public PresenceHub(IPresenceRepository presenceRepository)
     {
         _presenceRepository = presenceRepository;
     }

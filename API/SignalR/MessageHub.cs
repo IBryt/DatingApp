@@ -1,11 +1,10 @@
-﻿using API.Data.Repositories;
-using API.DTOs;
+﻿using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Interfaces;
+using API.Interfaces.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
-using System.Text.RegularExpressions;
 
 namespace API.SignalR;
 
@@ -13,14 +12,14 @@ public class MessageHub : Hub
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
-    private readonly PresenceRepository _presenceRepository;
-    private readonly GroupRepository _groupRepository;
+    private readonly IPresenceRepository _presenceRepository;
+    private readonly IGroupRepository _groupRepository;
 
     public MessageHub(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        PresenceRepository presenceRepository,
-        GroupRepository groupRepository)
+        IPresenceRepository presenceRepository,
+        IGroupRepository groupRepository)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;

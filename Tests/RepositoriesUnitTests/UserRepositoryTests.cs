@@ -8,7 +8,7 @@ using NUnit.Framework;
 using Tests.TestHelpers;
 
 
-namespace Tests.Data;
+namespace Tests.RepositoriesUnitTests;
 
 [TestFixture]
 public class UserRepositoryTests

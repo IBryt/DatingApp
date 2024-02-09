@@ -6,7 +6,7 @@ using API.Interfaces.Repositories;
 using NUnit.Framework;
 using Tests.TestHelpers;
 
-namespace Tests.Data;
+namespace Tests.RepositoriesUnitTests;
 
 public class LikesRepositoryTest
 {

@@ -6,7 +6,7 @@ using System.Text.Json;
 using Tests.TestHelpers;
 
 
-namespace Tests.IntegrationTests;
+namespace Tests.IntegrationControllerTests;
 
 public class AccountIntegrationTests
 {

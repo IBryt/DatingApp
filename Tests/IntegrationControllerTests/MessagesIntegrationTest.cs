@@ -7,7 +7,7 @@ using NUnit.Framework;
 using Tests.TestHelpers;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace Tests.IntegrationTests;
+namespace Tests.IntegrationControllerTests;
 
 public class MessagesIntegrationTest
 {

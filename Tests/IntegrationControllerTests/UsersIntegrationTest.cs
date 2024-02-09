@@ -12,7 +12,7 @@ using System.Text;
 using Tests.TestHelpers;
 
 
-namespace Tests.IntegrationTests;
+namespace Tests.IntegrationControllerTests;
 
 public class UsersIntegrationTest
 {

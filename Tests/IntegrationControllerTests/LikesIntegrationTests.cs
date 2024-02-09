@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Tests.TestHelpers;
 
-namespace Tests.IntegrationTests;
+namespace Tests.IntegrationControllerTests;
 
 public class LikesIntegrationTests
 {
