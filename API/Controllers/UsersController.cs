@@ -4,11 +4,13 @@ using API.Extensions;
 using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers;
 
+[Authorize]
 public class UsersController : BaseApiController
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -42,7 +44,7 @@ public class UsersController : BaseApiController
 
     //[HttpGet("{username}", Name = "GetUsers")]
     [HttpGet("{username}")]
-    public async Task<ActionResult<MemberDto>> GetUsers(string username)
+    public async Task<ActionResult<MemberDto>> GetUser(string username)
     {
         var member = await _unitOfWork.UserRepository.GetMemberAsync(username);
         return Ok(member);
@@ -69,13 +71,13 @@ public class UsersController : BaseApiController
 
         var result = await _photoService.AddPhotoAsync(file);
 
-        if (result.Error != null)
+        if (result.ErrorMessage != null)
         {
-            return BadRequest(result.Error.Message);
+            return BadRequest(result.ErrorMessage);
         }
         var photo = new Photo
         {
-            Url = result.SecureUrl.AbsoluteUri,
+            Url = result.AbsoluteUri,
             PublicId = result.PublicId,
         };
 
@@ -152,9 +154,9 @@ public class UsersController : BaseApiController
 
         var result = await _photoService.DeletePhotoAsync(photo.PublicId);
 
-        if (result.Error != null)
+        if (result.ErrorMessage != null)
         {
-            return BadRequest(result.Error.Message);
+            return BadRequest(result.ErrorMessage);
         }
 
         user.Photos.Remove(photo);

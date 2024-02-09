@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Tests.TestHelpers;
 
-public static  class IntegrationTestsHelpers
+public static class IntegrationTestsHelpers
 {
     public static async Task<T> DeserializeResponse<T>(HttpResponseMessage httpResponse)
     {
@@ -37,7 +37,7 @@ public static  class IntegrationTestsHelpers
     }
 
     public static StringContent StringContent<T>(T obj)
-    { 
+    {
         return new StringContent(JsonSerializer.Serialize(obj), Encoding.UTF8, "application/json");
     }
 }

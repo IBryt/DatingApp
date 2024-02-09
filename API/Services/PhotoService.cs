@@ -1,5 +1,7 @@
-﻿using API.Helpers;
+﻿using API.DTOs;
+using API.Helpers;
 using API.Interfaces;
+using AutoMapper;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.Extensions.Options;
@@ -9,8 +11,9 @@ namespace API.Services;
 public class PhotoService : IPhotoService
 {
     private readonly Cloudinary _cloudinary;
+    private readonly IMapper _mapper;
 
-    public PhotoService(IOptions<CloudinarySettings> config)
+    public PhotoService(IOptions<CloudinarySettings> config, IMapper mapper)
     {
         var account = new Account
         (
@@ -20,9 +23,10 @@ public class PhotoService : IPhotoService
         );
 
         _cloudinary = new Cloudinary(account);
+        _mapper = mapper;
     }
 
-    public async Task<ImageUploadResult> AddPhotoAsync(IFormFile file)
+    public async Task<ImageUploadDto> AddPhotoAsync(IFormFile file)
     {
         var uploadResult = new ImageUploadResult();
 
@@ -40,14 +44,14 @@ public class PhotoService : IPhotoService
             };
             uploadResult = await _cloudinary.UploadAsync(uploadParams);
         }
-        return uploadResult;
+        return _mapper.Map<ImageUploadDto>(uploadResult);
     }
 
-    public async Task<DeletionResult> DeletePhotoAsync(string publicId)
+    public async Task<PhotoDeletionResultDto> DeletePhotoAsync(string publicId)
     {
         var deleteParams = new DeletionParams(publicId);
         var result = await _cloudinary.DestroyAsync(deleteParams);
 
-        return result;
+        return _mapper.Map<PhotoDeletionResultDto>(result);
     }
 }
