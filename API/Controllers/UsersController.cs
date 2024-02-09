@@ -152,7 +152,7 @@ public class UsersController : BaseApiController
             return BadRequest("This photo have not PublicId");
         }
 
-        var result = await _photoService.DeletePhotoAsync(photo.PublicId);
+        var result = await _photoService.DeletePhotoAsync(photo.Url);
 
         if (result.ErrorMessage != null)
         {

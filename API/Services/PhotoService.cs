@@ -1,57 +1,56 @@
 ﻿using API.DTOs;
-using API.Helpers;
 using API.Interfaces;
-using AutoMapper;
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using Microsoft.Extensions.Options;
 
 namespace API.Services;
 
 public class PhotoService : IPhotoService
 {
-    private readonly Cloudinary _cloudinary;
-    private readonly IMapper _mapper;
-
-    public PhotoService(IOptions<CloudinarySettings> config, IMapper mapper)
-    {
-        var account = new Account
-        (
-            config.Value.CloudName,
-            config.Value.ApiKey,
-            config.Value.ApiSecret
-        );
-
-        _cloudinary = new Cloudinary(account);
-        _mapper = mapper;
-    }
+    private readonly string _host = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
+    private readonly string _uploadDirectory = "wwwroot";
+    private readonly string _uploadFolder = "uploads/test";
 
     public async Task<ImageUploadDto> AddPhotoAsync(IFormFile file)
     {
-        var uploadResult = new ImageUploadResult();
-
-        if (file.Length > 0)
+        if (file == null || file.Length == 0)
         {
-            using var stream = file.OpenReadStream();
-            var uploadParams = new ImageUploadParams()
-            {
-                File = new FileDescription(file.FileName, stream),
-                Transformation = new Transformation()
-                    .Height(500)
-                    .Width(500)
-                    .Crop("fill")
-                    .Gravity("face")
-            };
-            uploadResult = await _cloudinary.UploadAsync(uploadParams);
+            throw new ArgumentException("The file was not transferred or is empty.");
         }
-        return _mapper.Map<ImageUploadDto>(uploadResult);
+
+        var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), _uploadDirectory, _uploadFolder);
+        if (!Directory.Exists(uploadPath))
+        {
+            Directory.CreateDirectory(uploadPath);
+        }
+        var publicId = Guid.NewGuid().ToString();
+        var fileName = publicId + Path.GetExtension(file.FileName);
+        var filePath = Path.Combine(uploadPath, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        var absoluteUri = new Uri(new Uri(_host), Path.Combine(_uploadFolder, fileName)).AbsoluteUri;
+
+        return new ImageUploadDto
+        {
+            AbsoluteUri = absoluteUri,
+            PublicId = publicId,
+        };
     }
 
-    public async Task<PhotoDeletionResultDto> DeletePhotoAsync(string publicId)
+    public async Task<PhotoDeletionResultDto> DeletePhotoAsync(string Url)
     {
-        var deleteParams = new DeletionParams(publicId);
-        var result = await _cloudinary.DestroyAsync(deleteParams);
+        var uri = new Uri(Url);
+        if (!uri.AbsoluteUri.StartsWith(_host))
+        {
+            return new PhotoDeletionResultDto { ErrorMessage = "Unknown host. Cannot delete this photo" };
+        }
+        
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), _uploadDirectory, _uploadFolder , uri.Segments.Last());
+        
+        File.Delete(filePath);
 
-        return _mapper.Map<PhotoDeletionResultDto>(result);
+        return new PhotoDeletionResultDto();
     }
 }

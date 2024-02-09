@@ -2,7 +2,6 @@
 using API.Entities;
 using API.Extensions;
 using AutoMapper;
-using CloudinaryDotNet.Actions;
 
 namespace API.Helpers;
 
@@ -29,13 +28,5 @@ public class AutoMapperProfiles : Profile
                 opt.MapFrom(src => src.Sender.Photos.FirstOrDefault(p => p.IsMain).Url))
             .ForMember(dest => dest.RecipientPhotoUrl, opt =>
                 opt.MapFrom(src => src.Recipient.Photos.FirstOrDefault(p => p.IsMain).Url));
-
-        CreateMap<DeletionResult, PhotoDeletionResultDto>();
-
-        CreateMap<ImageUploadResult, ImageUploadDto>()
-            //.ForMember(dest => dest.ErrorMessage, opt =>
-            //    opt.MapFrom(src => src.Error.Message))
-            .ForMember(dest => dest.AbsoluteUri, opt =>
-                opt.MapFrom(src => src.SecureUrl.AbsoluteUri));
     }
 }
